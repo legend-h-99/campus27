@@ -25,6 +25,7 @@ import { seedFinancial } from "./seed/12-financial";
 import { seedQualityBase } from "./seed/13a-quality-base";
 import { seedQuality } from "./seed/13-quality";
 import { seedTasksAndProjects } from "./seed/14-tasks-projects";
+import { seedQualityAdvanced } from "./seed/15-quality-advanced";
 
 // ──────────────────────────────────────────────────
 // Database connection (Prisma 7 adapter pattern)
@@ -148,6 +149,10 @@ async function main() {
   await seedQualityBase(prisma, adminUsers);
   await seedQuality(prisma, adminUsers);
   await seedTasksAndProjects(prisma, adminUsers, departments);
+
+  // ── Phase 7: Advanced Quality Data ────────────
+  console.log("\n▶ Phase 7: Advanced Quality Data");
+  await seedQualityAdvanced(prisma);
 
   // ── Summary ───────────────────────────────────
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);

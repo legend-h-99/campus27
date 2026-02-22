@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus26 - Deployment Guide</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            line-height: 1.7;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2D7A8F 50%, #32B8C6 100%);
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .hero h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        .hero p { font-size: 1.2rem; opacity: 0.9; }
+        .hero .domain {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            padding: 8px 24px;
+            border-radius: 30px;
+            margin-top: 15px;
+            font-size: 1.1rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+
+        /* Architecture Diagram */
+        .arch-section {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 1px solid #334155;
+        }
+        .arch-section h2 {
+            color: #32B8C6;
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .arch-diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+        .arch-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+        }
+        .arch-box {
+            background: #0f172a;
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 16px 24px;
+            text-align: center;
+            min-width: 160px;
+            transition: all 0.3s;
+        }
+        .arch-box:hover {
+            border-color: #32B8C6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(50, 184, 198, 0.2);
+        }
+        .arch-box .icon { font-size: 2rem; margin-bottom: 8px; }
+        .arch-box .label { font-weight: 600; color: #f1f5f9; font-size: 0.95rem; }
+        .arch-box .sublabel { color: #94a3b8; font-size: 0.8rem; margin-top: 4px; }
+        .arch-box.cloudflare { border-color: #f6821f; }
+        .arch-box.nginx { border-color: #009639; }
+        .arch-box.nextjs { border-color: #32B8C6; }
+        .arch-box.postgres { border-color: #336791; }
+        .arch-box.user { border-color: #8b5cf6; }
+
+        .arch-arrow {
+            color: #475569;
+            font-size: 1.5rem;
+            padding: 8px 0;
+            text-align: center;
+        }
+        .arch-arrow.horizontal { padding: 0 10px; }
+
+        /* Progress Steps */
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+            padding: 0 10px;
+        }
+        .progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 40px;
+            right: 40px;
+            height: 3px;
+            background: #334155;
+        }
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            cursor: pointer;
+        }
+        .progress-step .num {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #334155;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            transition: all 0.3s;
+        }
+        .progress-step.active .num {
+            background: #2D7A8F;
+            box-shadow: 0 0 20px rgba(45, 122, 143, 0.5);
+        }
+        .progress-step.done .num {
+            background: #22c55e;
+        }
+        .progress-step .step-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-align: center;
+            max-width: 80px;
+        }
+
+        /* Step Cards */
+        .step-card {
+            background: #1e293b;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            border: 1px solid #334155;
+            overflow: hidden;
+        }
+        .step-header {
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .step-header:hover { background: #253548; }
+        .step-num {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2D7A8F, #32B8C6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        .step-info h3 { font-size: 1.1rem; color: #f1f5f9; }
+        .step-info p { font-size: 0.85rem; color: #94a3b8; margin-top: 2px; }
+        .step-badge {
+            margin-right: auto;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-server { background: #1e3a5f; color: #60a5fa; }
+        .badge-local { background: #1a2e1a; color: #4ade80; }
+        .badge-browser { background: #2d1f3d; color: #c084fc; }
+        .badge-done { background: #14532d; color: #22c55e; }
+
+        .step-content {
+            display: none;
+            padding: 0 24px 24px;
+            border-top: 1px solid #334155;
+        }
+        .step-card.open .step-content { display: block; padding-top: 20px; }
+
+        .cmd-block {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 16px;
+            margin: 12px 0;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.85rem;
+            direction: ltr;
+            text-align: left;
+            position: relative;
+            overflow-x: auto;
+        }
+        .cmd-block .comment { color: #6b7280; }
+        .cmd-block .cmd { color: #4ade80; }
+        .cmd-block .flag { color: #60a5fa; }
+        .cmd-block .string { color: #fbbf24; }
+
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: #334155;
+            border: none;
+            color: #94a3b8;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+        .copy-btn:hover { background: #475569; color: #f1f5f9; }
+
+        .note {
+            background: #172554;
+            border-right: 4px solid #3b82f6;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin: 12px 0;
+            font-size: 0.9rem;
+        }
+        .note.warning {
+            background: #422006;
+            border-right-color: #f59e0b;
+        }
+        .note.success {
+            background: #052e16;
+            border-right-color: #22c55e;
+        }
+
+        .expected {
+            background: #0f172a;
+            border: 1px dashed #475569;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 0.85rem;
+            direction: ltr;
+            text-align: left;
+            color: #22c55e;
+        }
+
+        /* Cloudflare Visual Guide */
+        .cf-guide {
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+        }
+        .cf-table {
+            width: 100%;
+            border-collapse: collapse;
+            direction: ltr;
+            text-align: left;
+            margin-top: 12px;
+        }
+        .cf-table th {
+            background: #1e293b;
+            padding: 10px 14px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+            border-bottom: 2px solid #334155;
+        }
+        .cf-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid #1e293b;
+            font-size: 0.9rem;
+        }
+        .cf-table .proxy-on {
+            color: #f6821f;
+            font-weight: 600;
+        }
+
+        .checklist {
+            list-style: none;
+            margin: 12px 0;
+        }
+        .checklist li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .checklist li::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            border: 2px solid #475569;
+            border-radius: 4px;
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .checklist li.checked::before {
+            background: #22c55e;
+            border-color: #22c55e;
+        }
+
+        .login-box {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: 2px solid #2D7A8F;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .login-box h4 { color: #32B8C6; margin-bottom: 16px; }
+        .login-field {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 16px;
+            background: #0f172a;
+            border-radius: 8px;
+            margin: 8px 0;
+            direction: ltr;
+        }
+        .login-field .label { color: #94a3b8; }
+        .login-field .value { color: #4ade80; font-family: monospace; }
+
+        .toggle-arrow {
+            margin-right: auto;
+            color: #475569;
+            transition: transform 0.3s;
+            font-size: 1.2rem;
+        }
+        .step-card.open .toggle-arrow { transform: rotate(90deg); }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #475569;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>Campus26 Deployment Guide</h1>
+    <p>دليل النشر التفاعلي خطوة بخطوة</p>
+    <div class="domain">app.cranl.com + cranl.com</div>
+</div>
+
+<div class="container">
+
+    <!-- Architecture Diagram -->
+    <div class="arch-section">
+        <h2>البنية التحتية</h2>
+        <div class="arch-diagram">
+            <div class="arch-row">
+                <div class="arch-box user">
+                    <div class="icon">👤</div>
+                    <div class="label">المستخدم</div>
+                    <div class="sublabel">app.cranl.com</div>
+                </div>
+            </div>
+            <div class="arch-arrow">⬇</div>
+            <div class="arch-row">
+                <div class="arch-box cloudflare">
+                    <div class="icon">🛡</div>
+                    <div class="label">Cloudflare</div>
+                    <div class="sublabel">SSL + CDN + DDoS Protection</div>
+                </div>
+            </div>
+            <div class="arch-arrow">⬇</div>
+            <div class="arch-row">
+                <div class="arch-box nginx">
+                    <div class="icon">🔀</div>
+                    <div class="label">Nginx</div>
+                    <div class="sublabel">Reverse Proxy + Rate Limit</div>
+                </div>
+            </div>
+            <div class="arch-arrow">⬇</div>
+            <div class="arch-row">
+                <div class="arch-box nextjs" style="min-width: 200px;">
+                    <div class="icon">⚡</div>
+                    <div class="label">Next.js 16 App</div>
+                    <div class="sublabel">Docker Container :3000</div>
+                </div>
+                <div class="arch-arrow horizontal">⟵⟶</div>
+                <div class="arch-box postgres">
+                    <div class="icon">🗄</div>
+                    <div class="label">PostgreSQL 16</div>
+                    <div class="sublabel">Docker Volume :5432</div>
+                </div>
+            </div>
+        </div>
+        <div class="note" style="margin-top: 24px;">
+            <strong>السيرفر:</strong> 212.224.88.111 (VPS سعودي) &nbsp;|&nbsp;
+            <strong>النظام:</strong> Ubuntu 22.04 &nbsp;|&nbsp;
+            <strong>التشغيل:</strong> Docker Compose
+        </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <div class="progress-step done" onclick="scrollToStep(1)">
+            <div class="num">✓</div>
+            <div class="step-label">تهيئة السيرفر</div>
+        </div>
+        <div class="progress-step done" onclick="scrollToStep(2)">
+            <div class="num">✓</div>
+            <div class="step-label">رفع المشروع</div>
+        </div>
+        <div class="progress-step done" onclick="scrollToStep(3)">
+            <div class="num">✓</div>
+            <div class="step-label">متغيرات البيئة</div>
+        </div>
+        <div class="progress-step done" onclick="scrollToStep(4)">
+            <div class="num">✓</div>
+            <div class="step-label">بناء Docker</div>
+        </div>
+        <div class="progress-step active" onclick="scrollToStep(5)">
+            <div class="num">5</div>
+            <div class="step-label">قاعدة البيانات</div>
+        </div>
+        <div class="progress-step" onclick="scrollToStep(6)">
+            <div class="num">6</div>
+            <div class="step-label">Cloudflare</div>
+        </div>
+        <div class="progress-step" onclick="scrollToStep(7)">
+            <div class="num">7</div>
+            <div class="step-label">التحقق</div>
+        </div>
+    </div>
+
+    <!-- Step 1: Server Setup (Done) -->
+    <div class="step-card" id="step1">
+        <div class="step-header" onclick="toggleStep(this)">
+            <div class="step-num">1</div>
+            <div class="step-info">
+                <h3>تهيئة السيرفر</h3>
+                <p>Docker + Firewall + Fail2Ban + Swap</p>
+            </div>
+            <span class="step-badge badge-done">✓ مكتمل</span>
+            <span class="toggle-arrow">◀</span>
+        </div>
+        <div class="step-content">
+            <div class="note success">تم تنفيذ setup-server.sh بنجاح — Docker مثبّت، الفايروول مفعّل، Fail2Ban شغّال.</div>
+        </div>
+    </div>
+
+    <!-- Step 2: Upload Project (Done) -->
+    <div class="step-card" id="step2">
+        <div class="step-header" onclick="toggleStep(this)">
+            <div class="step-num">2</div>
+            <div class="step-info">
+                <h3>رفع المشروع للسيرفر</h3>
+                <p>rsync مع استبعاد node_modules و .next</p>
+            </div>
+            <span class="step-badge badge-done">✓ مكتمل</span>
+            <span class="toggle-arrow">◀</span>
+        </div>
+        <div class="step-content">
+            <div class="note success">المشروع مرفوع في /opt/campus26/</div>
+        </div>
+    </div>
+
+    <!-- Step 3: Env (Done) -->
+    <div class="step-card" id="step3">
+        <div class="step-header" onclick="toggleStep(this)">
+            <div class="step-num">3</div>
+            <div class="step-info">
+                <h3>إعداد متغيرات البيئة</h3>
+                <p>.env.production مع DB_PASSWORD و NEXTAUTH_SECRET</p>
+            </div>
+            <span class="step-badge badge-done">✓ مكتمل</span>
+            <span class="toggle-arrow">◀</span>
+        </div>
+        <div class="step-content">
+            <div class="note success">تم إنشاء .env.production بقيم حقيقية.</div>
+        </div>
+    </div>
+
+    <!-- Step 4: Build (Done) -->
+    <div class="step-card" id="step4">
+        <div class="step-header" onclick="toggleStep(this)">
+            <div class="step-num">4</div>
+            <div class="step-info">
+                <h3>بناء Docker Images</h3>
+                <p>build --no-cache لكل الخدمات</p>
+            </div>
+            <span class="step-badge badge-done">✓ مكتمل</span>
+            <span class="toggle-arrow">◀</span>
+        </div>
+        <div class="step-content">
+            <div class="note success">Image campus26-app و campus26-migrator بُنيا بنجاح.</div>
+        </div>
+    </div>
+
+    <!-- Step 5: Database (Current) -->
+    <div class="step-card open" id="step5">
+        <div class="step-header" onclick="toggleStep(this)">
+            <div class="step-num">5</div>
+            <div class="step-info">
+                <h3>قاعدة البيانات — db push + seed</h3>
+                <p>إنشاء الجداول وتعبئة البيانات التجريبية</p>
+            </div>
+            <span class="step-badge badge-server">🖥 على السيرفر</span>
+            <span class="toggle-arrow">◀</span>
+        </div>
+        <div class="step-content">
+            <div class="note warning">
+                <strong>مهم:</strong> لازم تتأكد إن db push يقول "Your database is now in sync" وليس "No pending migrations".
+                لو قال migrations يعني الصورة القديمة لسّا مُستخدمة.
+            </div>
+
+            <h4 style="margin: 16px 0 8px; color: #f1f5f9;">5.1 — أوقف كل شيء واحذف البيانات القديمة:</h4>
+            <div class="cmd-block">
+                <button class="copy-btn" onclick="copyCmd(this)">نسخ</button>
+                <span class="cmd">cd</span> /opt/campus26<br>
+                <span class="cmd">docker compose</span> <span class="flag">-f</span> docker-compose.prod.yml <span class="flag">--env-file</span> .env.production <span class="cmd">down -v</span>
+            </div>
+
+            <h4 style="margin: 16px 0 8px; color: #f1f5f9;">5.2 — احذف الصور القديمة وأعد البناء:</h4>
+            <div class="cmd-block">
+                <button class="copy-btn" onclick="copyCmd(this)">نسخ</button>
+                <span class="cmd">docker rmi</span> $(docker images -q 'campus26*') 2>/dev/null; true<br>
+                <span class="cmd">docker compose</span> <span class="flag">-f</span> docker-compose.prod.yml <span class="flag">--env-file</span> .env.production <span class="cmd">build --no-cache</span>
+            </div>
+            <div class="note">⏳ ياخذ ~3-5 دقائق للبناء</div>
+
+            <h4 style="margin: 16px 0 8px; color: #f1f5f9;">5.3 — شغّل قاعدة البيانات:</h4>
+            <div class="cmd-block">
+                <button class="copy-btn" onclick="copyCmd(this)">نسخ</button>
+                <span class="cmd">docker compose</span> <span class="flag">-f</span> docker-compose.prod.yml <span class="flag">--env-file</span> .env.production <span class="cmd">up -d db</span><br>
+                <span class="cmd">sleep</span> 15
+            </div>
+
+            <h4 style="margin: 16px 0 8px; color: #f1f5f9;">5.4 — أنشئ الجداول (db push):</h4>
+            <div class="cmd-block">
+                <button class="copy-btn" onclick="copyCmd(this)">نسخ</button>
+                <span class="cmd">docker compose</span> <span class="flag">-f</span> docker-compose.prod.yml <span class="flag">--env-file</span> .env.production <span class="flag">--profile</span> migrate <span class="cmd">run --rm migrator</span>
+            </div>
+            <div class="expected">✓ Your database is now in sync with your Prisma schema.</div>
+
+            <h4 style="margin: 16px 0 8px; color: #f1f5f9;">5.5 — تعبئة البيانات (Seed):</h4>
+            <div class="cmd-block">
+                <button class="copy-btn" onclick="copyCmd(this)">نسخ</button>
+                <span class="cmd">docker compose</span> <span class="flag">-f</span> docker-compose.prod.yml <span class="flag">--env-file</span> .env.production <span class="flag">--profile</span> migrate <span class="cmd">run --rm migrator</span> npx tsx prisma/seed.ts
+            </div>
+            <div class="expected">✓ Seed completed successfully!</div>
+
+            <h4 style="margin: 16px 0 8px; color: #f1f5f9;">5.6 — تحقق من المستخدمين:</h4>
+            <div class="cmd-block">
+                <button class="copy-btn" onclick="copyCmd(this)">نسخ</button>
+                <span class="cmd">docker compose</span> <span class="flag">-f</span> docker-compose.prod.yml <span class="flag">--env-file</span> .env.production <span class="cmd">exec db</span> \<br>
+                &nbsp;&nbsp;psql <span class="flag">-U</span> campus26 <span class="flag">-d</span> campus26 <span class="flag">-c</span> <span class="string">"SELECT email, role FROM users LIMIT 5;"</span>
+            </div>
+            <div class="expected">
+                admin@campus26.sa | SUPER_ADMIN<br>
+                dean@campus26.sa  | DEAN<br>
+                ...
+            </div>
+
+            <h4 style="margin: 16px 0 8px; color: #f1f5f9;">5.7 — شغّل كل الخدمات:</h4>
+            <div class="cmd-block">
+                <button class="copy-btn" onclick="copyCmd(this)">نسخ</button>
+                <span class="cmd">docker compose</span> <span class="flag">-f</span> docker-compose.prod.yml <span class="flag">--env-file</span> .env.production <span class="cmd">up -d</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 6: Cloudflare -->
+    <div class="step-card" id="step6">
+        <div class="step-header" onclick="toggleStep(this)">
+            <div class="step-num">6</div>
+            <div class="step-info">
+                <h3>ربط الدومين في Cloudflare</h3>
+                <p>DNS Records + SSL + Nginx config</p>
+            </div>
+            <span class="step-badge badge-browser">🌐 Cloudflare + السيرفر</span>
+            <span class="toggle-arrow">◀</span>
+        </div>
+        <div class="step-content">
+            <h4 style="margin: 0 0 12px; color: #f1f5f9;">6.1 — DNS Records في Cloudflare:</h4>
+            <div class="cf-guide">
+                <p style="color: #94a3b8; margin-bottom: 8px;">dash.cloudflare.com ← cranl.com ← DNS ← Records</p>
+                <table class="cf-table">
+                    <thead>
+                        <tr><th>Type</th><th>Name</th><th>Content</th><th>Proxy</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>A</td><td>@</td><td>212.224.88.111</td><td class="proxy-on">🟠 ON</td></tr>
+                        <tr><td>A</td><td>www</td><td>212.224.88.111</td><td class="proxy-on">🟠 ON</td></tr>
+                        <tr><td>A</td><td>app</td><td>212.224.88.111</td><td class="proxy-on">🟠 ON</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h4 style="margin: 16px 0 8px; color: #f1f5f9;">6.2 — SSL Settings:</h4>
+            <ul class="checklist">
+                <li onclick="this.classList.toggle('checked')">SSL/TLS ← Overview ← اختر <strong>Full</strong></li>
+                <li onclick="this.classList.toggle('checked')">Edge Certificates ← Always Use HTTPS ← <strong>ON</strong></li>
+                <li onclick="this.classList.toggle('checked')">Edge Certificates ← Automatic HTTPS Rewrites ← <strong>ON</strong></li>
+            </ul>
+
+            <h4 style="margin: 16px 0 8px; color: #f1f5f9;">6.3 — تحديث NEXTAUTH_URL (على السيرفر):</h4>
+            <div class="cmd-block">
+                <button class="copy-btn" onclick="copyCmd(this)">نسخ</button>
+                <span class="cmd">sed -i</span> <span class="string">'s|NEXTAUTH_URL=https://cranl.com|NEXTAUTH_URL=https://app.cranl.com|'</span> /opt/campus26/.env.production
+            </div>
+
+            <h4 style="margin: 16px 0 8px; color: #f1f5f9;">6.4 — Nginx config (على السيرفر):</h4>
+            <div class="cmd-block" style="font-size: 0.8rem;">
+                <button class="copy-btn" onclick="copyCmd(this)">نسخ</button>
+                <span class="cmd">cat</span> > /opt/campus26/deploy/nginx/conf.d/cranl.conf &lt;&lt; <span class="string">'EOF'</span><br>
+                <span class="comment"># cranl.com redirect to app.cranl.com</span><br>
+                server {<br>
+                &nbsp;&nbsp;listen 80;<br>
+                &nbsp;&nbsp;server_name cranl.com www.cranl.com;<br>
+                &nbsp;&nbsp;return 301 https://app.cranl.com$request_uri;<br>
+                }<br><br>
+                <span class="comment"># app.cranl.com main app</span><br>
+                server {<br>
+                &nbsp;&nbsp;listen 80;<br>
+                &nbsp;&nbsp;server_name app.cranl.com;<br>
+                &nbsp;&nbsp;location / {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;proxy_pass http://app:3000;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;proxy_http_version 1.1;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;proxy_set_header Upgrade $http_upgrade;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;proxy_set_header Connection 'upgrade';<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;proxy_set_header Host $host;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;proxy_set_header X-Real-IP $remote_addr;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;proxy_set_header X-Forwarded-Proto $scheme;<br>
+                &nbsp;&nbsp;}<br>
+                &nbsp;&nbsp;location /api/ {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;limit_req zone=api burst=20 nodelay;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;proxy_pass http://app:3000;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;proxy_set_header Host $host;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;proxy_set_header X-Real-IP $remote_addr;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;proxy_set_header X-Forwarded-Proto $scheme;<br>
+                &nbsp;&nbsp;}<br>
+                &nbsp;&nbsp;location /api/auth/ {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;limit_req zone=login burst=5 nodelay;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;proxy_pass http://app:3000;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;proxy_set_header Host $host;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;proxy_set_header X-Real-IP $remote_addr;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;proxy_set_header X-Forwarded-Proto $scheme;<br>
+                &nbsp;&nbsp;}<br>
+                &nbsp;&nbsp;location /_next/static/ {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;proxy_pass http://app:3000;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;add_header Cache-Control "public, max-age=31536000, immutable";<br>
+                &nbsp;&nbsp;}<br>
+                }<br>
+                <span class="string">EOF</span>
+            </div>
+
+            <h4 style="margin: 16px 0 8px; color: #f1f5f9;">6.5 — أعد تشغيل الخدمات:</h4>
+            <div class="cmd-block">
+                <button class="copy-btn" onclick="copyCmd(this)">نسخ</button>
+                <span class="cmd">cd</span> /opt/campus26<br>
+                <span class="cmd">docker compose</span> <span class="flag">-f</span> docker-compose.prod.yml <span class="flag">--env-file</span> .env.production <span class="cmd">restart</span> nginx app
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 7: Verify -->
+    <div class="step-card" id="step7">
+        <div class="step-header" onclick="toggleStep(this)">
+            <div class="step-num">7</div>
+            <div class="step-info">
+                <h3>التحقق النهائي</h3>
+                <p>اختبار كل شيء وتسجيل الدخول</p>
+            </div>
+            <span class="step-badge badge-browser">🌐 المتصفح</span>
+            <span class="toggle-arrow">◀</span>
+        </div>
+        <div class="step-content">
+            <h4 style="margin: 0 0 12px; color: #f1f5f9;">7.1 — فحص الخدمات (على السيرفر):</h4>
+            <div class="cmd-block">
+                <button class="copy-btn" onclick="copyCmd(this)">نسخ</button>
+                <span class="cmd">docker compose</span> <span class="flag">-f</span> docker-compose.prod.yml <span class="flag">--env-file</span> .env.production <span class="cmd">ps</span><br><br>
+                <span class="comment"># تحقق من التطبيق</span><br>
+                <span class="cmd">curl</span> <span class="flag">-s -o</span> /dev/null <span class="flag">-w</span> <span class="string">"HTTP: %{http_code}\n"</span> http://localhost:3000<br><br>
+                <span class="comment"># تحقق عبر الدومين</span><br>
+                <span class="cmd">curl</span> <span class="flag">-s -o</span> /dev/null <span class="flag">-w</span> <span class="string">"HTTP: %{http_code}\n"</span> <span class="flag">-L</span> https://app.cranl.com
+            </div>
+
+            <h4 style="margin: 16px 0 12px; color: #f1f5f9;">7.2 — تسجيل الدخول:</h4>
+            <div class="login-box">
+                <h4>بيانات الدخول</h4>
+                <div style="text-align: left; direction: ltr;">
+                    <div style="margin-bottom: 8px; color: #94a3b8;">🌐 https://app.cranl.com</div>
+                </div>
+                <div class="login-field">
+                    <span class="label">Email:</span>
+                    <span class="value">admin@campus26.sa</span>
+                </div>
+                <div class="login-field">
+                    <span class="label">Password:</span>
+                    <span class="value">123456</span>
+                </div>
+            </div>
+
+            <h4 style="margin: 16px 0 8px; color: #f1f5f9;">7.3 — تسجيل دخول من سطر الأوامر:</h4>
+            <div class="cmd-block">
+                <button class="copy-btn" onclick="copyCmd(this)">نسخ</button>
+                <span class="comment"># 1. جيب CSRF token</span><br>
+                CSRF=$(<span class="cmd">curl</span> <span class="flag">-s -c</span> /tmp/c.txt http://localhost:3000/api/auth/csrf | grep -o '"csrfToken":"[^"]*"' | cut -d'"' -f4)<br><br>
+                <span class="comment"># 2. سجّل دخول</span><br>
+                <span class="cmd">curl</span> <span class="flag">-s -c</span> /tmp/c.txt <span class="flag">-b</span> /tmp/c.txt \<br>
+                &nbsp;&nbsp;<span class="flag">-X POST</span> http://localhost:3000/api/auth/callback/credentials \<br>
+                &nbsp;&nbsp;<span class="flag">-d</span> <span class="string">"csrfToken=${CSRF}&email=admin@campus26.sa&password=123456"</span> \<br>
+                &nbsp;&nbsp;<span class="flag">-w</span> <span class="string">"\nHTTP: %{http_code}\n"</span> <span class="flag">-o</span> /dev/null<br><br>
+                <span class="comment"># 3. تحقق من الجلسة</span><br>
+                <span class="cmd">curl</span> <span class="flag">-s -b</span> /tmp/c.txt http://localhost:3000/api/auth/session
+            </div>
+            <div class="expected">{"user":{"id":"...","email":"admin@campus26.sa","role":"SUPER_ADMIN",...}}</div>
+        </div>
+    </div>
+
+</div>
+
+<footer>
+    Campus26 Deployment Guide &mdash; cranl.com &mdash; 2026
+</footer>
+
+<script>
+function toggleStep(header) {
+    header.parentElement.classList.toggle('open');
+}
+
+function scrollToStep(n) {
+    document.getElementById('step' + n).scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function copyCmd(btn) {
+    const block = btn.parentElement;
+    const text = block.innerText.replace('Copy', '').replace('نسخ', '').trim();
+    navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = '✓ تم';
+        setTimeout(() => btn.textContent = 'نسخ', 2000);
+    });
+}
+
+// Toggle checklist items
+document.querySelectorAll('.checklist li').forEach(li => {
+    li.addEventListener('click', () => li.classList.toggle('checked'));
+});
+</script>
+
+</body>
+</html>

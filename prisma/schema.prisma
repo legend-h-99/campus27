@@ -1,0 +1,1284 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============== ENUMS ==============
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum TraineeStatus {
+  ACTIVE
+  SUSPENDED
+  WITHDRAWN
+  GRADUATED
+  DISMISSED
+}
+
+enum TrainerStatus {
+  ACTIVE
+  ON_LEAVE
+  TRANSFERRED
+  RESIGNED
+}
+
+enum GradeStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+enum TransactionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  COMPLETED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  IN_REVIEW
+  COMPLETED
+  CANCELLED
+}
+
+enum ProjectStatus {
+  PLANNING
+  IN_PROGRESS
+  ON_HOLD
+  COMPLETED
+  CANCELLED
+}
+
+enum LeaveType {
+  ANNUAL
+  SICK
+  EMERGENCY
+  MATERNITY
+  OTHER
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum NotificationType {
+  INFO
+  WARNING
+  SUCCESS
+  ERROR
+  TASK
+  GRADE
+  ATTENDANCE
+  FINANCE
+  SYSTEM
+}
+
+// Quality Enums moved to Quality Models section below
+
+enum DayOfWeek {
+  SUNDAY
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  SATURDAY
+}
+
+enum ExamType {
+  QUIZ
+  MIDTERM
+  FINAL
+  ASSIGNMENT
+}
+
+// ============== CORE MODELS ==============
+
+model User {
+  id            String     @id @default(cuid())
+  email         String     @unique
+  passwordHash  String
+  nameAr        String
+  nameEn        String
+  phone         String?
+  avatar        String?
+  role          String     @default("trainee")
+  status        UserStatus @default(ACTIVE)
+  lastLoginAt   DateTime?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  trainer           Trainer?
+  trainee           Trainee?
+  sentNotifications     Notification[]   @relation("SentNotifications")
+  receivedNotifications Notification[]   @relation("ReceivedNotifications")
+  assignedTasks     Task[]           @relation("AssignedTasks")
+  createdTasks      Task[]           @relation("CreatedTasks")
+  managedProjects   Project[]
+  auditLogs         AuditLog[]
+  leaves            Leave[]          @relation("UserLeaves")
+  approvedLeaves    Leave[]          @relation("ApprovedLeaves")
+  evaluationsGiven  Evaluation[]     @relation("EvaluatorRelation")
+  evaluationsReceived Evaluation[]   @relation("EvaluatedRelation")
+  gradedBy          Grade[]          @relation("GradeApprover")
+  recordedAttendance Attendance[]    @relation("AttendanceRecorder")
+  approvedTransactions FinancialTransaction[] @relation("TransactionApprover")
+  qualityStaff      QualityStaff?
+  headOfDepartment  Department?      @relation("DepartmentHead")
+  elearningContent  ElearningContent[]
+  researchProjects  ResearchProject[]
+
+  @@index([email])
+  @@index([role])
+  @@index([status])
+  @@map("users")
+}
+
+model Department {
+  id            String   @id @default(cuid())
+  nameAr        String
+  nameEn        String
+  descriptionAr String?
+  descriptionEn String?
+  headId        String?  @unique
+  capacity      Int      @default(0)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  head           User?           @relation("DepartmentHead", fields: [headId], references: [id])
+  trainers       Trainer[]
+  trainees       Trainee[]
+  courses        Course[]
+  trainingPlans  TrainingPlan[]
+
+  @@map("departments")
+}
+
+model Semester {
+  id          String   @id @default(cuid())
+  nameAr      String
+  nameEn      String
+  year        Int
+  term        Int
+  startDate   DateTime
+  endDate     DateTime
+  isCurrent   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  schedules   Schedule[]
+  enrollments Enrollment[]
+
+  @@unique([year, term])
+  @@map("semesters")
+}
+
+// ============== TRAINER MODELS ==============
+
+model Trainer {
+  id              String        @id @default(cuid())
+  userId          String        @unique
+  employeeNumber  String        @unique
+  fullNameAr      String
+  fullNameEn      String
+  departmentId    String
+  specialization  String?
+  qualificationAr String?
+  qualificationEn String?
+  hireDate        DateTime
+  phone           String?
+  status          TrainerStatus @default(ACTIVE)
+  isActive        Boolean       @default(true)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  department  Department   @relation(fields: [departmentId], references: [id])
+  schedules   Schedule[]
+  attendance  Attendance[] @relation("TrainerAttendance")
+
+  @@index([departmentId])
+  @@index([status])
+  @@map("trainers")
+}
+
+// ============== TRAINEE MODELS ==============
+
+model Trainee {
+  id              String        @id @default(cuid())
+  userId          String        @unique
+  studentNumber   String        @unique
+  fullNameAr      String
+  fullNameEn      String
+  nationalId      String        @unique
+  departmentId    String
+  level           Int           @default(1)
+  enrollmentDate  DateTime
+  gpa             Float         @default(0)
+  phone           String?
+  guardianPhone   String?
+  status          TraineeStatus @default(ACTIVE)
+  isActive        Boolean       @default(true)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  department  Department   @relation(fields: [departmentId], references: [id])
+  enrollments Enrollment[]
+
+  @@index([departmentId])
+  @@index([status])
+  @@index([studentNumber])
+  @@map("trainees")
+}
+
+// ============== ACADEMIC MODELS ==============
+
+model Course {
+  id              String   @id @default(cuid())
+  courseCode       String   @unique
+  nameAr          String
+  nameEn          String
+  descriptionAr   String?
+  descriptionEn   String?
+  departmentId    String
+  credits         Int      @default(3)
+  hours           Int      @default(3)
+  level           Int      @default(1)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  department          Department           @relation(fields: [departmentId], references: [id])
+  schedules           Schedule[]
+  enrollments         Enrollment[]
+  trainingPlanCourses TrainingPlanCourse[]
+
+  @@index([departmentId])
+  @@map("courses")
+}
+
+model Schedule {
+  id          String    @id @default(cuid())
+  courseId     String
+  trainerId   String
+  semesterId  String
+  dayOfWeek   DayOfWeek
+  startTime   String
+  endTime     String
+  room        String?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  course     Course      @relation(fields: [courseId], references: [id])
+  trainer    Trainer     @relation(fields: [trainerId], references: [id])
+  semester   Semester    @relation(fields: [semesterId], references: [id])
+  attendance Attendance[]
+
+  @@index([courseId])
+  @@index([trainerId])
+  @@index([semesterId])
+  @@map("schedules")
+}
+
+model Enrollment {
+  id             String   @id @default(cuid())
+  traineeId      String
+  courseId        String
+  semesterId     String
+  enrollmentDate DateTime @default(now())
+  status         String   @default("ENROLLED")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  trainee    Trainee      @relation(fields: [traineeId], references: [id])
+  course     Course       @relation(fields: [courseId], references: [id])
+  semester   Semester     @relation(fields: [semesterId], references: [id])
+  grade      Grade?
+  attendance Attendance[]
+
+  @@unique([traineeId, courseId, semesterId])
+  @@index([traineeId])
+  @@index([courseId])
+  @@map("enrollments")
+}
+
+model Grade {
+  id               String      @id @default(cuid())
+  enrollmentId     String      @unique
+  midtermGrade     Float?
+  finalGrade       Float?
+  assignmentsGrade Float?
+  attendanceGrade  Float?
+  totalGrade       Float?
+  letterGrade      String?
+  status           GradeStatus @default(DRAFT)
+  approvedById     String?
+  approvedDate     DateTime?
+  remarks          String?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  enrollment Enrollment @relation(fields: [enrollmentId], references: [id])
+  approvedBy User?      @relation("GradeApprover", fields: [approvedById], references: [id])
+
+  @@index([status])
+  @@map("grades")
+}
+
+model Attendance {
+  id            String           @id @default(cuid())
+  enrollmentId  String
+  scheduleId    String
+  trainerId     String?
+  date          DateTime
+  status        AttendanceStatus @default(PRESENT)
+  excuse        String?
+  recordedById  String?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  enrollment Enrollment @relation(fields: [enrollmentId], references: [id])
+  schedule   Schedule   @relation(fields: [scheduleId], references: [id])
+  trainer    Trainer?   @relation("TrainerAttendance", fields: [trainerId], references: [id])
+  recordedBy User?      @relation("AttendanceRecorder", fields: [recordedById], references: [id])
+
+  @@unique([enrollmentId, scheduleId, date])
+  @@index([date])
+  @@map("attendance")
+}
+
+// ============== TRAINING PLAN MODELS ==============
+
+model TrainingPlan {
+  id                String   @id @default(cuid())
+  planCode          String   @unique
+  nameAr            String
+  nameEn            String
+  descriptionAr     String?  @db.Text
+  descriptionEn     String?  @db.Text
+  departmentId      String
+  totalCredits      Int      @default(0)
+  durationSemesters Int      @default(4)
+  level             String   @default("diploma")
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  department Department          @relation(fields: [departmentId], references: [id])
+  courses    TrainingPlanCourse[]
+
+  @@index([departmentId])
+  @@map("training_plans")
+}
+
+model TrainingPlanCourse {
+  id             String  @id @default(cuid())
+  trainingPlanId String
+  courseId        String
+  semesterNumber Int
+  isElective     Boolean @default(false)
+
+  trainingPlan TrainingPlan @relation(fields: [trainingPlanId], references: [id], onDelete: Cascade)
+  course       Course       @relation(fields: [courseId], references: [id])
+
+  @@unique([trainingPlanId, courseId])
+  @@index([trainingPlanId])
+  @@map("training_plan_courses")
+}
+
+// ============== FINANCIAL MODELS ==============
+
+model FinancialTransaction {
+  id              String            @id @default(cuid())
+  type            TransactionType
+  amount          Float
+  descriptionAr   String?
+  descriptionEn   String?
+  category        String
+  reference       String?
+  date            DateTime          @default(now())
+  status          TransactionStatus @default(PENDING)
+  approvedById    String?
+  approvedDate    DateTime?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  approvedBy User? @relation("TransactionApprover", fields: [approvedById], references: [id])
+
+  @@index([type])
+  @@index([status])
+  @@index([date])
+  @@map("financial_transactions")
+}
+
+model BudgetItem {
+  id              String   @id @default(cuid())
+  nameAr          String
+  nameEn          String
+  category        String
+  allocatedAmount Float
+  spentAmount     Float    @default(0)
+  fiscalYear      Int
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("budget_items")
+}
+
+model ProcurementRequest {
+  id            String   @id @default(cuid())
+  titleAr       String
+  titleEn       String
+  description   String?
+  estimatedCost Float
+  actualCost    Float?
+  requestedBy   String
+  status        String   @default("PENDING")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("procurement_requests")
+}
+
+model WarehouseItem {
+  id          String   @id @default(cuid())
+  nameAr      String
+  nameEn      String
+  category    String
+  quantity    Int      @default(0)
+  minQuantity Int      @default(0)
+  unit        String
+  location    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("warehouse_items")
+}
+
+// ============== TASK & PROJECT MODELS ==============
+
+model Task {
+  id            String       @id @default(cuid())
+  titleAr       String
+  titleEn       String
+  descriptionAr String?
+  descriptionEn String?
+  assignedToId  String?
+  assignedById  String?
+  priority      TaskPriority @default(MEDIUM)
+  status        TaskStatus   @default(TODO)
+  dueDate       DateTime?
+  completedAt   DateTime?
+  projectId     String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  assignedTo User?    @relation("AssignedTasks", fields: [assignedToId], references: [id])
+  assignedBy User?    @relation("CreatedTasks", fields: [assignedById], references: [id])
+  project    Project? @relation(fields: [projectId], references: [id])
+
+  @@index([assignedToId])
+  @@index([status])
+  @@index([priority])
+  @@map("tasks")
+}
+
+model Project {
+  id            String        @id @default(cuid())
+  nameAr        String
+  nameEn        String
+  descriptionAr String?
+  descriptionEn String?
+  managerId     String?
+  startDate     DateTime?
+  endDate       DateTime?
+  budget        Float?
+  status        ProjectStatus @default(PLANNING)
+  progress      Int           @default(0)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  manager User?  @relation(fields: [managerId], references: [id])
+  tasks   Task[]
+
+  @@index([status])
+  @@map("projects")
+}
+
+// ============== HR MODELS ==============
+
+model Leave {
+  id            String      @id @default(cuid())
+  userId        String
+  type          LeaveType
+  startDate     DateTime
+  endDate       DateTime
+  reason        String?
+  status        LeaveStatus @default(PENDING)
+  approvedById  String?
+  approvedDate  DateTime?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  user       User  @relation("UserLeaves", fields: [userId], references: [id])
+  approvedBy User? @relation("ApprovedLeaves", fields: [approvedById], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@map("leaves")
+}
+
+model Evaluation {
+  id            String   @id @default(cuid())
+  evaluatedId   String
+  evaluatorId   String
+  period        String
+  overallScore  Float
+  categories    Json
+  comments      String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  evaluated User @relation("EvaluatedRelation", fields: [evaluatedId], references: [id])
+  evaluator User @relation("EvaluatorRelation", fields: [evaluatorId], references: [id])
+
+  @@index([evaluatedId])
+  @@map("evaluations")
+}
+
+// ============== QUALITY ENUMS ==============
+
+enum QualityStaffPosition {
+  HEAD
+  COORDINATOR
+  SPECIALIST
+  AUDITOR
+}
+
+enum QualityStaffStatus {
+  ACTIVE
+  ON_LEAVE
+  RESIGNED
+}
+
+enum StandardCategory {
+  ACADEMIC
+  INSTITUTIONAL
+  PROGRAM
+  LEARNING_OUTCOMES
+}
+
+enum KpiFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  SEMESTER
+  ANNUAL
+}
+
+enum KpiMeasurementStatus {
+  EXCEEDS
+  MEETS
+  BELOW
+  CRITICAL
+}
+
+enum AuditType {
+  INTERNAL
+  EXTERNAL
+  PROGRAM_REVIEW
+  COURSE_REVIEW
+  SELF_ASSESSMENT
+}
+
+enum AuditStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum AuditRating {
+  EXCELLENT
+  GOOD
+  SATISFACTORY
+  NEEDS_IMPROVEMENT
+  UNSATISFACTORY
+}
+
+enum FindingType {
+  STRENGTH
+  WEAKNESS
+  OPPORTUNITY
+  THREAT
+  NON_COMPLIANCE
+}
+
+enum FindingSeverity {
+  CRITICAL
+  MAJOR
+  MINOR
+  OBSERVATION
+}
+
+enum FindingStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum ImprovementPlanType {
+  CORRECTIVE
+  PREVENTIVE
+  ENHANCEMENT
+}
+
+enum ImprovementPlanStatus {
+  DRAFT
+  APPROVED
+  IP_IN_PROGRESS
+  IP_COMPLETED
+  IP_CANCELLED
+}
+
+enum ImprovementActionStatus {
+  PENDING
+  IA_IN_PROGRESS
+  IA_COMPLETED
+  DELAYED
+}
+
+enum SurveyType {
+  STUDENT_SATISFACTION
+  COURSE_EVALUATION
+  TRAINER_EVALUATION
+  FACILITIES
+  SERVICES
+  GRADUATE_SURVEY
+  EMPLOYER_SURVEY
+}
+
+enum SurveyTargetAudience {
+  STUDENTS
+  TRAINERS
+  GRADUATES
+  EMPLOYERS
+  STAFF
+}
+
+enum SurveyStatus {
+  SURVEY_DRAFT
+  SURVEY_ACTIVE
+  SURVEY_CLOSED
+  SURVEY_ARCHIVED
+}
+
+enum QualityReportType {
+  KPI_REPORT
+  AUDIT_REPORT
+  ANNUAL_REPORT
+  SELF_STUDY
+  PROGRAM_REVIEW
+  NCAAA_SUBMISSION
+}
+
+enum QualityReportStatus {
+  REPORT_DRAFT
+  UNDER_REVIEW
+  REPORT_APPROVED
+  PUBLISHED
+}
+
+enum QualityDocType {
+  POLICY
+  PROCEDURE
+  GUIDELINE
+  FORM
+  MANUAL
+  DOC_STANDARD
+}
+
+enum QualityDocStatus {
+  DOC_DRAFT
+  DOC_ACTIVE
+  DOC_UNDER_REVIEW
+  DOC_ARCHIVED
+}
+
+enum MeetingType {
+  QUALITY_COMMITTEE
+  AUDIT_TEAM
+  REVIEW
+  PLANNING
+}
+
+enum MeetingStatus {
+  SCHEDULED
+  MEETING_COMPLETED
+  MEETING_CANCELLED
+}
+
+enum AccreditationType {
+  INSTITUTIONAL
+  PROGRAM_ACCREDITATION
+  COURSE_ACCREDITATION
+}
+
+enum AccreditationStatus {
+  ACCREDITATION_ACTIVE
+  EXPIRED
+  UNDER_RENEWAL
+  SUSPENDED
+}
+
+// ============== QUALITY MODELS ==============
+
+model QualityStaff {
+  id             String               @id @default(cuid())
+  userId         String               @unique
+  fullNameAr     String
+  fullNameEn     String?
+  nationalId     String?              @unique
+  email          String?
+  phone          String?
+  position       QualityStaffPosition
+  specialization String?
+  hireDate       DateTime?
+  status         QualityStaffStatus   @default(ACTIVE)
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+
+  user                  User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  measuredKpis          KpiMeasurement[]   @relation("MeasuredBy")
+  verifiedKpis          KpiMeasurement[]   @relation("VerifiedBy")
+  ledAudits             QualityAudit[]     @relation("LeadAuditor")
+  createdAudits         QualityAudit[]     @relation("AuditCreator")
+  ownedPlans            ImprovementPlan[]  @relation("PlanOwner")
+  createdPlans          ImprovementPlan[]  @relation("PlanCreator")
+  preparedReports       QualityReport[]    @relation("ReportPreparer")
+  reviewedReports       QualityReport[]    @relation("ReportReviewer")
+  approvedReports       QualityReport[]    @relation("ReportApprover")
+  ownedDocuments        QualityDocument[]
+  createdMeetings       QualityMeeting[]
+
+  @@index([position])
+  @@index([status])
+  @@map("quality_staff")
+}
+
+model QualityStandard {
+  id            String           @id @default(cuid())
+  standardCode  String           @unique
+  nameAr        String
+  nameEn        String?
+  category      StandardCategory
+  descriptionAr String?          @db.Text
+  descriptionEn String?          @db.Text
+  weight        Float?
+  ncaaaVersion  String?
+  isActive      Boolean          @default(true)
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  kpis     QualityKpi[]
+  findings AuditFinding[]
+
+  @@index([category])
+  @@map("quality_standards")
+}
+
+model QualityKpi {
+  id                String       @id @default(cuid())
+  standardId        String?
+  kpiCode           String       @unique
+  nameAr            String
+  nameEn            String?
+  descriptionAr     String?      @db.Text
+  measurementUnit   String?
+  targetValue       Float
+  minAcceptableValue Float?
+  calculationMethod String?      @db.Text
+  dataSource        String?
+  frequency         KpiFrequency @default(SEMESTER)
+  responsibleDept   String?
+  isActive          Boolean      @default(true)
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  standard     QualityStandard?  @relation(fields: [standardId], references: [id])
+  measurements KpiMeasurement[]
+
+  @@index([standardId])
+  @@index([frequency])
+  @@map("quality_kpis")
+}
+
+model KpiMeasurement {
+  id              String               @id @default(cuid())
+  kpiId           String
+  measurementDate DateTime
+  actualValue     Float
+  targetValue     Float?
+  achievementRate Float?
+  status          KpiMeasurementStatus
+  departmentId    String?
+  notes           String?              @db.Text
+  measuredById    String?
+  verifiedById    String?
+  createdAt       DateTime             @default(now())
+
+  kpi        QualityKpi    @relation(fields: [kpiId], references: [id])
+  measuredBy QualityStaff? @relation("MeasuredBy", fields: [measuredById], references: [id])
+  verifiedBy QualityStaff? @relation("VerifiedBy", fields: [verifiedById], references: [id])
+
+  @@index([kpiId, measurementDate])
+  @@index([status])
+  @@map("kpi_measurements")
+}
+
+model QualityAudit {
+  id              String       @id @default(cuid())
+  auditType       AuditType
+  titleAr         String
+  titleEn         String?
+  departmentId    String?
+  programId       String?
+  scheduledDate   DateTime?
+  completionDate  DateTime?
+  status          AuditStatus  @default(PLANNED)
+  leadAuditorId   String?
+  auditTeam       Json?
+  scopeAr         String?      @db.Text
+  findingsSummary String?      @db.Text
+  overallRating   AuditRating?
+  reportFilePath  String?
+  createdById     String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  leadAuditor QualityStaff?  @relation("LeadAuditor", fields: [leadAuditorId], references: [id])
+  createdBy   QualityStaff?  @relation("AuditCreator", fields: [createdById], references: [id])
+  findings    AuditFinding[]
+
+  @@index([status])
+  @@index([auditType])
+  @@map("quality_audits")
+}
+
+model AuditFinding {
+  id                  String          @id @default(cuid())
+  auditId             String
+  standardId          String?
+  findingType         FindingType
+  severity            FindingSeverity?
+  descriptionAr       String          @db.Text
+  descriptionEn       String?         @db.Text
+  evidence            String?         @db.Text
+  recommendationAr    String?         @db.Text
+  responsibleDept     String?
+  dueDate             DateTime?
+  status              FindingStatus   @default(OPEN)
+  resolutionNotes     String?         @db.Text
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  audit    QualityAudit     @relation(fields: [auditId], references: [id], onDelete: Cascade)
+  standard QualityStandard? @relation(fields: [standardId], references: [id])
+  plans    ImprovementPlan[]
+
+  @@index([auditId])
+  @@index([status])
+  @@index([severity])
+  @@map("audit_findings")
+}
+
+model ImprovementPlan {
+  id                   String               @id @default(cuid())
+  titleAr              String
+  titleEn              String?
+  planType             ImprovementPlanType
+  relatedFindingId     String?
+  departmentId         String?
+  descriptionAr        String?              @db.Text
+  objectives           String?              @db.Text
+  startDate            DateTime?
+  targetCompletionDate DateTime?
+  actualCompletionDate DateTime?
+  status               ImprovementPlanStatus @default(DRAFT)
+  ownerId              String?
+  budget               Float?
+  progressPercentage   Int                  @default(0)
+  createdById          String?
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+
+  relatedFinding AuditFinding?      @relation(fields: [relatedFindingId], references: [id])
+  owner          QualityStaff?      @relation("PlanOwner", fields: [ownerId], references: [id])
+  createdBy      QualityStaff?      @relation("PlanCreator", fields: [createdById], references: [id])
+  actions        ImprovementAction[]
+
+  @@index([status])
+  @@map("improvement_plans")
+}
+
+model ImprovementAction {
+  id                String                 @id @default(cuid())
+  planId            String
+  descriptionAr     String                @db.Text
+  responsiblePerson String?
+  startDate         DateTime?
+  dueDate           DateTime?
+  completionDate    DateTime?
+  status            ImprovementActionStatus @default(PENDING)
+  completionPercentage Int                @default(0)
+  notes             String?               @db.Text
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+
+  plan ImprovementPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@index([planId])
+  @@index([status])
+  @@map("improvement_actions")
+}
+
+model QualitySurvey {
+  id              String              @id @default(cuid())
+  titleAr         String
+  titleEn         String?
+  surveyType      SurveyType
+  targetAudience  SurveyTargetAudience
+  departmentId    String?
+  semester        String?
+  academicYear    String?
+  startDate       DateTime?
+  endDate         DateTime?
+  questions       Json?
+  totalResponses  Int                 @default(0)
+  status          SurveyStatus        @default(SURVEY_DRAFT)
+  createdById     String?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  responses SurveyResponse[]
+
+  @@index([surveyType])
+  @@index([status])
+  @@map("quality_surveys")
+}
+
+model SurveyResponse {
+  id               String   @id @default(cuid())
+  surveyId         String
+  respondentId     String?
+  respondentType   String?
+  responses        Json?
+  satisfactionScore Float?
+  comments         String?  @db.Text
+  responseDate     DateTime @default(now())
+
+  survey QualitySurvey @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+
+  @@index([surveyId])
+  @@map("survey_responses")
+}
+
+model QualityReport {
+  id                String              @id @default(cuid())
+  reportType        QualityReportType
+  titleAr           String
+  titleEn           String?
+  departmentId      String?
+  academicYear      String?
+  reportPeriodStart DateTime?
+  reportPeriodEnd   DateTime?
+  reportData        Json?
+  executiveSummary  String?             @db.Text
+  recommendations   String?             @db.Text
+  filePath          String?
+  status            QualityReportStatus @default(REPORT_DRAFT)
+  preparedById      String?
+  reviewedById      String?
+  approvedById      String?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  preparedBy QualityStaff? @relation("ReportPreparer", fields: [preparedById], references: [id])
+  reviewedBy QualityStaff? @relation("ReportReviewer", fields: [reviewedById], references: [id])
+  approvedBy QualityStaff? @relation("ReportApprover", fields: [approvedById], references: [id])
+
+  @@index([reportType])
+  @@index([academicYear])
+  @@map("quality_reports")
+}
+
+model QualityDocument {
+  id            String          @id @default(cuid())
+  docType       QualityDocType
+  titleAr       String
+  titleEn       String?
+  docCode       String?         @unique
+  version       String?
+  descriptionAr String?         @db.Text
+  filePath      String?
+  effectiveDate DateTime?
+  reviewDate    DateTime?
+  status        QualityDocStatus @default(DOC_DRAFT)
+  ownerId       String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  owner QualityStaff? @relation(fields: [ownerId], references: [id])
+
+  @@index([docType])
+  @@index([status])
+  @@map("quality_documents")
+}
+
+model QualityMeeting {
+  id           String        @id @default(cuid())
+  meetingType  MeetingType
+  titleAr      String?
+  meetingDate  DateTime?
+  location     String?
+  attendees    Json?
+  agenda       String?       @db.Text
+  minutes      String?       @db.Text
+  decisions    Json?
+  actionItems  Json?
+  status       MeetingStatus @default(SCHEDULED)
+  createdById  String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  createdBy QualityStaff? @relation(fields: [createdById], references: [id])
+
+  @@map("quality_meetings")
+}
+
+model Accreditation {
+  id                 String              @id @default(cuid())
+  accreditationType  AccreditationType
+  accreditingBody    String?
+  departmentId       String?
+  programId          String?
+  certificateNumber  String?
+  grantDate          DateTime?
+  expiryDate         DateTime?
+  status             AccreditationStatus @default(ACCREDITATION_ACTIVE)
+  certificateFilePath String?
+  notes              String?             @db.Text
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  @@index([status])
+  @@index([expiryDate])
+  @@map("accreditations")
+}
+
+// ============== E-LEARNING MODELS ==============
+
+model ElearningContent {
+  id            String   @id @default(cuid())
+  titleAr       String
+  titleEn       String
+  descriptionAr String?
+  descriptionEn String?
+  type          String
+  fileUrl       String?
+  courseCode     String?
+  uploadedById  String
+  isPublished   Boolean  @default(false)
+  viewCount     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  uploadedBy User @relation(fields: [uploadedById], references: [id])
+
+  @@map("elearning_content")
+}
+
+model Exam {
+  id          String    @id @default(cuid())
+  titleAr     String
+  titleEn     String
+  courseCode   String?
+  type        ExamType
+  totalMarks  Int       @default(100)
+  duration    Int       @default(60)
+  questions   Json
+  isPublished Boolean   @default(false)
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("exams")
+}
+
+// ============== RESEARCH MODELS ==============
+
+model ResearchProject {
+  id          String    @id @default(cuid())
+  titleAr     String
+  titleEn     String
+  abstractAr  String?
+  abstractEn  String?
+  leaderId    String
+  field       String
+  budget      Float?
+  startDate   DateTime?
+  endDate     DateTime?
+  status      String    @default("PROPOSED")
+  publications Int      @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  leader User @relation(fields: [leaderId], references: [id])
+
+  @@map("research_projects")
+}
+
+// ============== COMMUNITY MODELS ==============
+
+model CommunityProgram {
+  id                  String    @id @default(cuid())
+  titleAr             String
+  titleEn             String
+  descriptionAr       String?
+  descriptionEn       String?
+  type                String
+  startDate           DateTime?
+  endDate             DateTime?
+  maxParticipants     Int?
+  currentParticipants Int       @default(0)
+  status              String    @default("PLANNED")
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  @@map("community_programs")
+}
+
+// ============== AI MODELS ==============
+
+model AIConversation {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String?
+  locale    String   @default("ar")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  messages AIMessage[]
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("ai_conversations")
+}
+
+model AIMessage {
+  id             String   @id @default(cuid())
+  conversationId String
+  role           String   // "user" | "assistant" | "system"
+  content        String
+  tokenCount     Int?
+  createdAt      DateTime @default(now())
+
+  conversation AIConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@map("ai_messages")
+}
+
+model AIInsightCache {
+  id        String   @id @default(cuid())
+  scope     String   // "academic" | "financial" | "quality" | "department:{id}"
+  locale    String   @default("ar")
+  data      Json     // cached insights JSON
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([scope, locale])
+  @@index([expiresAt])
+  @@map("ai_insight_cache")
+}
+
+// ============== NOTIFICATION & AUDIT MODELS ==============
+
+model Notification {
+  id         String           @id @default(cuid())
+  senderId   String?
+  receiverId String
+  titleAr    String
+  titleEn    String
+  messageAr  String
+  messageEn  String
+  type       NotificationType @default(INFO)
+  isRead     Boolean          @default(false)
+  link       String?
+  createdAt  DateTime         @default(now())
+
+  sender   User? @relation("SentNotifications", fields: [senderId], references: [id])
+  receiver User  @relation("ReceivedNotifications", fields: [receiverId], references: [id])
+
+  @@index([receiverId])
+  @@index([isRead])
+  @@map("notifications")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String
+  entity    String
+  entityId  String
+  oldValues Json?
+  newValues Json?
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([entity])
+  @@index([createdAt])
+  @@map("audit_logs")
+}

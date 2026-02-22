@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus26 - دليل تسجيل الدخول</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            background: linear-gradient(135deg, #0a1628 0%, #1a2d4a 50%, #0d2137 100%);
+            color: #e0e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #32B8C6, #2D7A8F);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .header p {
+            font-size: 1.2em;
+            color: #8899aa;
+        }
+
+        /* URL Box */
+        .url-box {
+            background: linear-gradient(135deg, #1e3a5f, #1a2d4a);
+            border: 2px solid #32B8C6;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        .url-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #32B8C6, #2D7A8F, #32B8C6);
+        }
+        .url-box .label {
+            font-size: 0.9em;
+            color: #8899aa;
+            margin-bottom: 10px;
+        }
+        .url-box .url {
+            font-size: 2em;
+            font-weight: bold;
+            color: #32B8C6;
+            direction: ltr;
+            letter-spacing: 1px;
+        }
+        .url-box .url a {
+            color: #32B8C6;
+            text-decoration: none;
+        }
+        .url-box .url a:hover {
+            text-decoration: underline;
+        }
+        .url-box .note {
+            margin-top: 12px;
+            font-size: 0.85em;
+            color: #6688aa;
+        }
+
+        /* Steps */
+        .step {
+            background: linear-gradient(135deg, #152238, #1a2d4a);
+            border: 1px solid #2a3f5f;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .step:hover {
+            border-color: #32B8C6;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(50, 184, 198, 0.15);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px 24px;
+            cursor: pointer;
+        }
+        .step-number {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #32B8C6, #1E5A6B);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+        }
+        .step-title {
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+        .step-subtitle {
+            font-size: 0.85em;
+            color: #8899aa;
+            margin-top: 4px;
+        }
+
+        .step-content {
+            padding: 0 24px 24px;
+        }
+
+        /* Browser Mockup */
+        .browser {
+            background: #0d1b2a;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #2a3f5f;
+            margin-top: 16px;
+        }
+        .browser-bar {
+            background: #162235;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid #2a3f5f;
+        }
+        .browser-dots {
+            display: flex;
+            gap: 6px;
+        }
+        .browser-dots span {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .browser-dots .red { background: #ff5f56; }
+        .browser-dots .yellow { background: #ffbd2e; }
+        .browser-dots .green { background: #27ca40; }
+        .browser-url {
+            flex: 1;
+            background: #0d1b2a;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 0.85em;
+            color: #6688aa;
+            direction: ltr;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .browser-url .lock {
+            color: #27ca40;
+        }
+        .browser-body {
+            padding: 30px;
+            min-height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Login Form Mockup */
+        .login-mockup {
+            background: linear-gradient(135deg, #1a2d4a, #152238);
+            border: 1px solid #2a3f5f;
+            border-radius: 16px;
+            padding: 32px;
+            width: 100%;
+            max-width: 380px;
+        }
+        .login-mockup .logo {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .login-mockup .logo-icon {
+            font-size: 2.5em;
+            margin-bottom: 8px;
+        }
+        .login-mockup .logo-text {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #32B8C6;
+        }
+        .login-mockup .logo-sub {
+            font-size: 0.8em;
+            color: #6688aa;
+        }
+
+        .mock-field {
+            margin-bottom: 16px;
+        }
+        .mock-field label {
+            display: block;
+            font-size: 0.85em;
+            color: #8899aa;
+            margin-bottom: 6px;
+        }
+        .mock-field .input {
+            background: #0d1b2a;
+            border: 2px solid #2a3f5f;
+            border-radius: 8px;
+            padding: 12px 14px;
+            color: #e0e8f0;
+            font-size: 0.95em;
+            direction: ltr;
+            text-align: left;
+            width: 100%;
+            transition: border-color 0.3s;
+        }
+        .mock-field .input.active {
+            border-color: #32B8C6;
+        }
+        .mock-field .input .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background: #32B8C6;
+            animation: blink 1s infinite;
+            vertical-align: middle;
+            margin-right: 2px;
+        }
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .mock-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #32B8C6, #1E5A6B);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        /* Arrow indicator */
+        .arrow-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(50, 184, 198, 0.15);
+            border: 1px solid rgba(50, 184, 198, 0.3);
+            border-radius: 8px;
+            padding: 6px 14px;
+            font-size: 0.85em;
+            color: #32B8C6;
+            margin-top: 10px;
+        }
+
+        /* Credentials Table */
+        .creds-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 16px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #2a3f5f;
+        }
+        .creds-table th {
+            background: #1E5A6B;
+            padding: 12px 16px;
+            text-align: right;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+        .creds-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #1a2d4a;
+            font-size: 0.9em;
+        }
+        .creds-table tr:nth-child(even) td {
+            background: rgba(42, 63, 95, 0.2);
+        }
+        .creds-table tr:last-child td {
+            border-bottom: none;
+        }
+        .creds-table .email {
+            direction: ltr;
+            text-align: left;
+            font-family: 'Courier New', monospace;
+            color: #32B8C6;
+        }
+        .creds-table .pass {
+            direction: ltr;
+            text-align: left;
+            font-family: 'Courier New', monospace;
+            color: #ffbd2e;
+        }
+        .creds-table .role {
+            color: #8899aa;
+        }
+
+        /* Copy button */
+        .copy-btn {
+            background: rgba(50, 184, 198, 0.15);
+            border: 1px solid rgba(50, 184, 198, 0.3);
+            border-radius: 6px;
+            color: #32B8C6;
+            padding: 4px 10px;
+            font-size: 0.8em;
+            cursor: pointer;
+            margin-right: 8px;
+            transition: all 0.2s;
+        }
+        .copy-btn:hover {
+            background: rgba(50, 184, 198, 0.3);
+        }
+
+        /* Dashboard mockup */
+        .dashboard-mockup {
+            width: 100%;
+        }
+        .dash-header {
+            background: linear-gradient(135deg, #2D7A8F, #1E5A6B);
+            padding: 16px 20px;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .dash-header .title {
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+        .dash-header .user-badge {
+            background: rgba(255,255,255,0.15);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 0.85em;
+        }
+        .dash-body {
+            padding: 20px;
+        }
+        .dash-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .dash-stat {
+            background: #162235;
+            border-radius: 10px;
+            padding: 14px;
+            text-align: center;
+            border: 1px solid #2a3f5f;
+        }
+        .dash-stat .num {
+            font-size: 1.6em;
+            font-weight: bold;
+            color: #32B8C6;
+        }
+        .dash-stat .lbl {
+            font-size: 0.75em;
+            color: #6688aa;
+            margin-top: 4px;
+        }
+        .dash-sidebar-hint {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .dash-menu-item {
+            background: #162235;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #2a3f5f;
+            font-size: 0.8em;
+            color: #8899aa;
+        }
+        .dash-menu-item .icon { font-size: 1.5em; margin-bottom: 4px; }
+
+        /* Cloudflare box */
+        .cf-box {
+            background: linear-gradient(135deg, #f48120 0%, #e6700a 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 16px;
+            color: white;
+        }
+        .cf-box h4 { margin-bottom: 8px; }
+        .cf-box p { font-size: 0.9em; opacity: 0.9; }
+
+        /* Success Banner */
+        .success-banner {
+            background: linear-gradient(135deg, #0d3d2d, #0a2d22);
+            border: 2px solid #27ca40;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 30px;
+        }
+        .success-banner .check {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        .success-banner h3 {
+            color: #27ca40;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        .success-banner p {
+            color: #8fccaa;
+        }
+
+        /* Troubleshooting */
+        .troubleshoot {
+            background: linear-gradient(135deg, #2d1a0a, #3d2210);
+            border: 1px solid #664422;
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 24px;
+        }
+        .troubleshoot h3 {
+            color: #ffbd2e;
+            margin-bottom: 16px;
+            font-size: 1.2em;
+        }
+        .troubleshoot .item {
+            margin-bottom: 14px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid #3d2a15;
+        }
+        .troubleshoot .item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        .troubleshoot .q {
+            font-weight: 600;
+            color: #ffbd2e;
+            margin-bottom: 4px;
+        }
+        .troubleshoot .a {
+            color: #ccaa88;
+            font-size: 0.9em;
+        }
+        .troubleshoot code {
+            background: rgba(0,0,0,0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            direction: ltr;
+            display: inline-block;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.8em; }
+            .url-box .url { font-size: 1.4em; }
+            .dash-stats { grid-template-columns: repeat(2, 1fr); }
+            .dash-sidebar-hint { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Header -->
+        <div class="header">
+            <h1>Campus26</h1>
+            <p>دليل تسجيل الدخول خطوة بخطوة</p>
+        </div>
+
+        <!-- URL Box -->
+        <div class="url-box">
+            <div class="label">رابط المنصة</div>
+            <div class="url"><a href="https://app.cranl.com" target="_blank">https://app.cranl.com</a></div>
+            <div class="note">cranl.com يحوّلك تلقائياً لـ app.cranl.com</div>
+        </div>
+
+        <!-- Step 1 -->
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">1</div>
+                <div>
+                    <div class="step-title">افتح الرابط في المتصفح</div>
+                    <div class="step-subtitle">انسخ الرابط وافتحه في Chrome أو Safari</div>
+                </div>
+            </div>
+            <div class="step-content">
+                <div class="browser">
+                    <div class="browser-bar">
+                        <div class="browser-dots">
+                            <span class="red"></span>
+                            <span class="yellow"></span>
+                            <span class="green"></span>
+                        </div>
+                        <div class="browser-url">
+                            <span class="lock">&#x1f512;</span>
+                            https://app.cranl.com
+                        </div>
+                    </div>
+                    <div class="browser-body" style="flex-direction: column; gap: 12px;">
+                        <div style="font-size: 2em;">&#9203;</div>
+                        <div style="color: #8899aa;">جاري التحويل لصفحة تسجيل الدخول...</div>
+                        <div class="arrow-indicator">
+                            &#8592; HTTP 307 redirect &#8594; /ar/login
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">2</div>
+                <div>
+                    <div class="step-title">صفحة تسجيل الدخول</div>
+                    <div class="step-subtitle">أدخل البريد الإلكتروني وكلمة المرور</div>
+                </div>
+            </div>
+            <div class="step-content">
+                <div class="browser">
+                    <div class="browser-bar">
+                        <div class="browser-dots">
+                            <span class="red"></span>
+                            <span class="yellow"></span>
+                            <span class="green"></span>
+                        </div>
+                        <div class="browser-url">
+                            <span class="lock">&#x1f512;</span>
+                            https://app.cranl.com/ar/login
+                        </div>
+                    </div>
+                    <div class="browser-body">
+                        <div class="login-mockup">
+                            <div class="logo">
+                                <div class="logo-icon">&#x1f393;</div>
+                                <div class="logo-text">Campus26</div>
+                                <div class="logo-sub">نظام إدارة الكلية التقنية</div>
+                            </div>
+                            <div class="mock-field">
+                                <label>البريد الإلكتروني</label>
+                                <div class="input active">
+                                    admin@campus26.sa<span class="cursor"></span>
+                                </div>
+                            </div>
+                            <div class="mock-field">
+                                <label>كلمة المرور</label>
+                                <div class="input">
+                                    ******
+                                </div>
+                            </div>
+                            <button class="mock-btn">تسجيل الدخول &#8592;</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="arrow-indicator" style="margin-top: 16px;">
+                    &#9888;&#65039; كلمة المرور لجميع الحسابات التجريبية: <strong style="margin-right: 6px; direction: ltr;">123456</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3 - Credentials -->
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">3</div>
+                <div>
+                    <div class="step-title">بيانات الدخول المتاحة</div>
+                    <div class="step-subtitle">اختر الحساب المناسب حسب الصلاحية</div>
+                </div>
+            </div>
+            <div class="step-content">
+                <table class="creds-table">
+                    <thead>
+                        <tr>
+                            <th>الدور</th>
+                            <th>البريد الإلكتروني</th>
+                            <th>كلمة المرور</th>
+                            <th>نسخ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="role">&#x1f451; مدير النظام</td>
+                            <td class="email">admin@campus26.sa</td>
+                            <td class="pass">123456</td>
+                            <td><button class="copy-btn" onclick="copyText('admin@campus26.sa')">نسخ</button></td>
+                        </tr>
+                        <tr>
+                            <td class="role">&#x1f3db;&#65039; العميد</td>
+                            <td class="email">dean@campus26.sa</td>
+                            <td class="pass">123456</td>
+                            <td><button class="copy-btn" onclick="copyText('dean@campus26.sa')">نسخ</button></td>
+                        </tr>
+                        <tr>
+                            <td class="role">&#x1f468;&#8205;&#x1f3eb; وكيل المدربين</td>
+                            <td class="email">vp.trainers@campus26.sa</td>
+                            <td class="pass">123456</td>
+                            <td><button class="copy-btn" onclick="copyText('vp.trainers@campus26.sa')">نسخ</button></td>
+                        </tr>
+                        <tr>
+                            <td class="role">&#x1f468;&#8205;&#x1f393; وكيل المتدربين</td>
+                            <td class="email">vp.trainees@campus26.sa</td>
+                            <td class="pass">123456</td>
+                            <td><button class="copy-btn" onclick="copyText('vp.trainees@campus26.sa')">نسخ</button></td>
+                        </tr>
+                        <tr>
+                            <td class="role">&#9989; وكيل الجودة</td>
+                            <td class="email">vp.quality@campus26.sa</td>
+                            <td class="pass">123456</td>
+                            <td><button class="copy-btn" onclick="copyText('vp.quality@campus26.sa')">نسخ</button></td>
+                        </tr>
+                        <tr>
+                            <td class="role">&#x1f4b0; المحاسب</td>
+                            <td class="email">accountant@campus26.sa</td>
+                            <td class="pass">123456</td>
+                            <td><button class="copy-btn" onclick="copyText('accountant@campus26.sa')">نسخ</button></td>
+                        </tr>
+                        <tr>
+                            <td class="role">&#x1f4cb; مسؤول الجودة</td>
+                            <td class="email">quality@campus26.sa</td>
+                            <td class="pass">123456</td>
+                            <td><button class="copy-btn" onclick="copyText('quality@campus26.sa')">نسخ</button></td>
+                        </tr>
+                        <tr>
+                            <td class="role">&#x1f4bb; رئيس قسم CS</td>
+                            <td class="email">head.cs@campus26.sa</td>
+                            <td class="pass">123456</td>
+                            <td><button class="copy-btn" onclick="copyText('head.cs@campus26.sa')">نسخ</button></td>
+                        </tr>
+                        <tr>
+                            <td class="role">&#x1f393; متدرب</td>
+                            <td class="email">s241001@stu.campus26.sa</td>
+                            <td class="pass">123456</td>
+                            <td><button class="copy-btn" onclick="copyText('s241001@stu.campus26.sa')">نسخ</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Step 4 - Dashboard -->
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">4</div>
+                <div>
+                    <div class="step-title">لوحة التحكم</div>
+                    <div class="step-subtitle">بعد تسجيل الدخول بنجاح</div>
+                </div>
+            </div>
+            <div class="step-content">
+                <div class="browser">
+                    <div class="browser-bar">
+                        <div class="browser-dots">
+                            <span class="red"></span>
+                            <span class="yellow"></span>
+                            <span class="green"></span>
+                        </div>
+                        <div class="browser-url">
+                            <span class="lock">&#x1f512;</span>
+                            https://app.cranl.com/ar/dashboard
+                        </div>
+                    </div>
+                    <div class="browser-body">
+                        <div class="dashboard-mockup">
+                            <div class="dash-header">
+                                <div class="title">&#x1f393; Campus26 - لوحة التحكم</div>
+                                <div class="user-badge">&#x1f464; مدير النظام</div>
+                            </div>
+                            <div class="dash-body">
+                                <div class="dash-stats">
+                                    <div class="dash-stat">
+                                        <div class="num">300</div>
+                                        <div class="lbl">متدرب</div>
+                                    </div>
+                                    <div class="dash-stat">
+                                        <div class="num">60</div>
+                                        <div class="lbl">مدرب</div>
+                                    </div>
+                                    <div class="dash-stat">
+                                        <div class="num">120</div>
+                                        <div class="lbl">مقرر</div>
+                                    </div>
+                                    <div class="dash-stat">
+                                        <div class="num">10</div>
+                                        <div class="lbl">قسم</div>
+                                    </div>
+                                </div>
+                                <div class="dash-sidebar-hint">
+                                    <div class="dash-menu-item"><div class="icon">&#x1f4ca;</div>الإحصائيات</div>
+                                    <div class="dash-menu-item"><div class="icon">&#x1f465;</div>المتدربين</div>
+                                    <div class="dash-menu-item"><div class="icon">&#x1f468;&#8205;&#x1f3eb;</div>المدربين</div>
+                                    <div class="dash-menu-item"><div class="icon">&#x1f4d6;</div>المقررات</div>
+                                    <div class="dash-menu-item"><div class="icon">&#x1f4b0;</div>المالية</div>
+                                    <div class="dash-menu-item"><div class="icon">&#9989;</div>الجودة</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Banner -->
+        <div class="success-banner">
+            <div class="check">&#9989;</div>
+            <h3>المنصة جاهزة للاستخدام!</h3>
+            <p>كل الخدمات تعمل بنجاح: التطبيق + قاعدة البيانات + Nginx + Cloudflare SSL</p>
+        </div>
+
+        <!-- Troubleshooting -->
+        <div class="troubleshoot">
+            <h3>&#x1f527; حلول المشاكل الشائعة</h3>
+
+            <div class="item">
+                <div class="q">&#10060; الصفحة لا تفتح (timeout أو DNS error)</div>
+                <div class="a">DNS ممكن يحتاج 2-5 دقائق. جرّب مسح cache المتصفح أو جرّب Incognito mode. تأكد إن Cloudflare DNS فيه A record لـ <code>app</code> يشير لـ <code>212.224.88.111</code></div>
+            </div>
+
+            <div class="item">
+                <div class="q">&#10060; خطأ SSL (ERR_SSL_PROTOCOL_ERROR)</div>
+                <div class="a">في Cloudflare: SSL/TLS &#8594; Overview &#8594; غيّر لـ <strong>Full</strong> (مو Full Strict ومو Flexible)</div>
+            </div>
+
+            <div class="item">
+                <div class="q">&#10060; صفحة "Check your email - magic link"</div>
+                <div class="a">هذي صفحة NextAuth الافتراضية. يعني التطبيق ما يوصّلك لصفحة الـ login الخاصة. جرّب: <code>https://app.cranl.com/ar/login</code> مباشرة</div>
+            </div>
+
+            <div class="item">
+                <div class="q">&#10060; خطأ "Invalid credentials"</div>
+                <div class="a">تأكد من البريد وكلمة المرور. جميع الحسابات التجريبية كلمة مرورها: <code>123456</code></div>
+            </div>
+
+            <div class="item">
+                <div class="q">&#10060; Error 522 (Connection timed out)</div>
+                <div class="a">التطبيق متوقف على السيرفر. ادخل على السيرفر وشغّل:<br>
+                <code>cd /opt/campus26 && docker compose -f docker-compose.prod.yml --env-file .env.production up -d</code></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const btns = document.querySelectorAll('.copy-btn');
+                btns.forEach(btn => {
+                    if (btn.onclick.toString().includes(text)) {
+                        const original = btn.textContent;
+                        btn.textContent = 'تم!';
+                        btn.style.background = 'rgba(39, 202, 64, 0.2)';
+                        btn.style.borderColor = 'rgba(39, 202, 64, 0.4)';
+                        btn.style.color = '#27ca40';
+                        setTimeout(() => {
+                            btn.textContent = original;
+                            btn.style.background = '';
+                            btn.style.borderColor = '';
+                            btn.style.color = '';
+                        }, 1500);
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>

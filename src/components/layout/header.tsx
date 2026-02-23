@@ -101,7 +101,7 @@ export function Header({ user }: HeaderProps) {
         {mode === "hidden" && (
           <Link href="/" className="flex items-center gap-1.5 md:hidden">
             <GraduationCap className="h-6 w-6 text-teal-600" />
-            <span className="text-sm font-bold text-teal-600">Campus27</span>
+            <span className="text-sm font-bold text-teal-600">Saohil1</span>
           </Link>
         )}
 

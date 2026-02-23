@@ -599,7 +599,7 @@ export function Sidebar({ userPermissions }: SidebarProps) {
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-teal-600 to-aqua-600 shadow-md shadow-teal-600/15">
                 <GraduationCap className="h-6 w-6 text-white" />
               </div>
-              <span className="text-[17px] font-bold text-slate-800">Campus27</span>
+              <span className="text-[17px] font-bold text-slate-800">Saohil1</span>
             </Link>
             <button
               onClick={closeMobile}
@@ -693,7 +693,7 @@ export function Sidebar({ userPermissions }: SidebarProps) {
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-teal-600 to-aqua-600 shadow-md shadow-teal-600/15">
                 <GraduationCap className="h-6 w-6 text-white" />
               </div>
-              <span className="text-[17px] font-bold text-slate-800">Campus27</span>
+              <span className="text-[17px] font-bold text-slate-800">Saohil1</span>
             </Link>
             <button
               onClick={toggle}

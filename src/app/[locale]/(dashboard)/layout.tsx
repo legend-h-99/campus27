@@ -6,6 +6,7 @@ import { Header } from "@/components/layout/header";
 import { SessionProvider } from "@/components/shared/session-provider";
 import { ResponsiveContent } from "@/components/layout/responsive-content";
 import { AIChatbot } from "@/components/ai/ai-chatbot";
+import { CommandPalette } from "@/components/ui/command-palette";
 
 export default async function DashboardLayout({
   children,
@@ -45,6 +46,7 @@ export default async function DashboardLayout({
           <ResponsiveContent>{children}</ResponsiveContent>
         </div>
         <AIChatbot />
+        <CommandPalette />
       </div>
     </SessionProvider>
   );

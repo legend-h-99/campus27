@@ -24,6 +24,7 @@
     "@prisma/adapter-pg": "^7.4.0",
     "@prisma/client": "^7.4.0",
     "@tanstack/react-table": "^8.21.3",
+    "@vercel/analytics": "^1.6.1",
     "ai": "^6.0.86",
     "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",

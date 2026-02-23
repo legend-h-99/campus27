@@ -48,7 +48,7 @@ export function CountUp({
 
   return (
     <span ref={ref} className={className}>
-      {prefix}{count.toLocaleString("ar-SA")}{suffix}
+      {prefix}{count.toLocaleString("en-US")}{suffix}
     </span>
   );
 }

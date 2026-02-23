@@ -191,3 +191,39 @@ npm run build
 | Search API | ❌ | **✅ /api/search** |
 | Micro-Interactions | أساسية | **✅ محسّنة** |
 | Docker File | docker-compose.prod.yml | **docker-compose.dev.yml** |
+
+---
+
+## الموقع التسويقي (Marketing Site)
+
+الصفحات الجديدة المضافة في هذه الجلسة:
+
+| الصفحة | العنوان (عربي) | العنوان (إنجليزي) |
+|--------|----------------|-------------------|
+| الرئيسية | http://localhost:3001/ar/home | http://localhost:3001/en/home |
+| الميزات | http://localhost:3001/ar/features | http://localhost:3001/en/features |
+| التسعير | http://localhost:3001/ar/pricing | http://localhost:3001/en/pricing |
+| تواصل معنا | http://localhost:3001/ar/contact | http://localhost:3001/en/contact |
+
+> لوحة التحكم: http://localhost:3001/ar/dashboard (تتطلب تسجيل دخول)
+
+### المكونات الجديدة
+
+#### مكونات التسويق (`src/components/marketing/`)
+- `marketing-navbar.tsx` — شريط التنقل العلوي (scroll-aware، موبايل)
+- `marketing-footer.tsx` — تذييل الصفحة
+- `hero-section.tsx` — القسم الترحيبي مع mockup عائم
+- `stats-banner.tsx` — إحصائيات CountUp
+- `features-grid.tsx` — شبكة الميزات الست
+- `cta-section.tsx` — قسم الدعوة للعمل
+
+#### أدوات الحركة (`src/components/ui/`)
+- `fade-in-section.tsx` — IntersectionObserver fade+slide
+- `stagger-children.tsx` — أطفال متتابعين
+- `count-up.tsx` — عداد متحرك
+- `page-transition.tsx` — انتقال صفحات لوحة التحكم
+
+#### نظام الإشعارات
+- `src/stores/toast-store.ts` — Zustand store
+- `src/components/ui/toast.tsx` — ToastContainer (global)
+- الاستخدام: `useToastStore().add("تم الحفظ!", "success")`

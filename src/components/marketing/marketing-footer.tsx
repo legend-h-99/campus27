@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 
 interface MarketingFooterProps {
   locale: string;
@@ -17,20 +17,25 @@ export function MarketingFooter({ locale }: MarketingFooterProps) {
             </div>
             <span className="font-semibold text-slate-900">Saohil1</span>
             <span className="text-sm text-slate-400">
-              {isAr ? "© 2026 جميع الحقوق محفوظة" : "© 2026 All rights reserved"}
+              {isAr
+                ? `© ${new Date().getFullYear()} جميع الحقوق محفوظة`
+                : `© ${new Date().getFullYear()} All rights reserved`}
             </span>
           </div>
-          <div className="flex items-center gap-6 text-sm text-slate-500">
-            <Link href={`/${locale}/features`} className="hover:text-teal-600 transition-colors">
+          <nav
+            aria-label={isAr ? "روابط التذييل" : "Footer links"}
+            className="flex items-center gap-6 text-sm text-slate-500"
+          >
+            <Link href="/features" className="hover:text-teal-600 transition-colors">
               {isAr ? "الميزات" : "Features"}
             </Link>
-            <Link href={`/${locale}/pricing`} className="hover:text-teal-600 transition-colors">
+            <Link href="/pricing" className="hover:text-teal-600 transition-colors">
               {isAr ? "التسعير" : "Pricing"}
             </Link>
-            <Link href={`/${locale}/contact`} className="hover:text-teal-600 transition-colors">
+            <Link href="/contact" className="hover:text-teal-600 transition-colors">
               {isAr ? "تواصل معنا" : "Contact"}
             </Link>
-          </div>
+          </nav>
         </div>
       </div>
     </footer>

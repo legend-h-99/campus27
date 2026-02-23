@@ -952,3 +952,106 @@ button:disabled {
     margin-inline-start: 0 !important;
   }
 }
+
+/* ═══════════════════════════════════════════
+   COMMAND PALETTE — Saohil1
+   ═══════════════════════════════════════════ */
+
+.command-palette-overlay {
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(4px);
+  animation: overlay-in 0.15s ease-out;
+}
+
+.command-palette-panel {
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(27, 169, 160, 0.15);
+  animation: palette-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.command-palette-item {
+  transition: background-color 0.1s ease;
+}
+
+@keyframes overlay-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes palette-in {
+  from { opacity: 0; transform: scale(0.96) translateY(-8px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);    }
+}
+
+/* ═══════════════════════════════════════════
+   MICRO-INTERACTIONS — Saohil1
+   ═══════════════════════════════════════════ */
+
+/* Glass cards: lift on hover (reinforces existing stats-card hover) */
+.glass-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(27, 169, 160, 0.12);
+}
+
+/* Buttons: spring press on active */
+button:not(:disabled):active {
+  transform: scale(0.97);
+  transition: transform 0.08s ease;
+}
+
+/* Active nav item: shimmer sweep */
+.nav-item-active::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.15) 50%,
+    transparent 60%
+  );
+  background-size: 200% 100%;
+  animation: nav-shimmer 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes nav-shimmer {
+  0%   { background-position: 200% center; }
+  50%  { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Skeleton loading shimmer */
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(27, 169, 160, 0.06) 25%,
+    rgba(27, 169, 160, 0.12) 37%,
+    rgba(27, 169, 160, 0.06) 63%
+  );
+  background-size: 400px 100%;
+  animation: skeleton-shimmer 1.4s ease infinite;
+}
+
+@keyframes skeleton-shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+
+/* Keyboard shortcut badge */
+.kbd-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  border: 1px solid rgba(27, 169, 160, 0.2);
+  background: rgba(27, 169, 160, 0.06);
+  font-size: 11px;
+  font-weight: 500;
+  color: #1BA9A0;
+  font-family: ui-monospace, monospace;
+}
+}

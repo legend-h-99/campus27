@@ -8,6 +8,7 @@ import { ResponsiveContent } from "@/components/layout/responsive-content";
 import { AIChatbot } from "@/components/ai/ai-chatbot";
 import { CommandPalette } from "@/components/ui/command-palette";
 import { PageTransition } from "@/components/ui/page-transition";
+import { ToastContainer } from "@/components/ui/toast";
 
 export default async function DashboardLayout({
   children,
@@ -50,6 +51,7 @@ export default async function DashboardLayout({
         </div>
         <AIChatbot />
         <CommandPalette />
+        <ToastContainer />
       </div>
     </SessionProvider>
   );

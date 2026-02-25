@@ -30,6 +30,7 @@ interface WorkflowStore {
   setNodes: (nodes: WorkflowNodeDraft[]) => void;
   setSaving: (v: boolean) => void;
   markClean: () => void;
+  launchClean: (id: string) => void;
 }
 
 const DEFAULT_META: WorkflowMeta = {
@@ -108,4 +109,10 @@ export const useWorkflowStore = create<WorkflowStore>((set) => ({
   setSaving: (v) => set({ isSaving: v }),
 
   markClean: () => set({ isDirty: false }),
+
+  launchClean: (id) =>
+    set((s) => ({
+      meta: { ...s.meta, id, status: "active" as const },
+      isDirty: false,
+    })),
 }));

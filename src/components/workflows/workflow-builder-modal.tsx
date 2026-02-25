@@ -1,7 +1,7 @@
 // src/components/workflows/workflow-builder-modal.tsx
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useWorkflowStore } from "@/stores/workflow-store";
 import { WorkflowTopBar } from "./workflow-top-bar";
@@ -12,11 +12,13 @@ import { WorkflowRightPanel } from "./workflow-right-panel";
 export function WorkflowBuilderModal() {
   const isOpen = useWorkflowStore((s) => s.isOpen);
   const meta = useWorkflowStore((s) => s.meta);
-  const updateMeta = useWorkflowStore((s) => s.updateMeta);
+  const launchClean = useWorkflowStore((s) => s.launchClean);
   const nodes = useWorkflowStore((s) => s.nodes);
   const closeBuilder = useWorkflowStore((s) => s.closeBuilder);
   const setSaving = useWorkflowStore((s) => s.setSaving);
   const markClean = useWorkflowStore((s) => s.markClean);
+
+  const launchInFlight = useRef(false);
 
   // Close on Escape
   useEffect(() => {
@@ -72,6 +74,8 @@ export function WorkflowBuilderModal() {
   };
 
   const handleLaunch = async () => {
+    if (launchInFlight.current) return;
+    launchInFlight.current = true;
     setSaving(true);
     try {
       let workflowId = meta.id;
@@ -88,12 +92,18 @@ export function WorkflowBuilderModal() {
             schedule: meta.schedule,
           }),
         });
+        if (!createRes.ok) {
+          throw new Error(`فشل إنشاء سير العمل (${createRes.status})`);
+        }
         const created = await createRes.json();
-        workflowId = created.data.id as string;
+        if (typeof created?.data?.id !== "string") {
+          throw new Error("استجابة غير متوقعة من الخادم");
+        }
+        workflowId = created.data.id;
       }
 
       // Step B: Persist nodes (atomic replace)
-      await fetch(`/api/v1/workflows/${workflowId}/nodes`, {
+      const nodesRes = await fetch(`/api/v1/workflows/${workflowId}/nodes`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -106,9 +116,12 @@ export function WorkflowBuilderModal() {
           })),
         }),
       });
+      if (!nodesRes.ok) {
+        throw new Error(`فشل حفظ خطوات سير العمل (${nodesRes.status})`);
+      }
 
       // Step C: Activate — set status to active + persist meta fields
-      await fetch(`/api/v1/workflows/${workflowId}`, {
+      const activateRes = await fetch(`/api/v1/workflows/${workflowId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -119,11 +132,18 @@ export function WorkflowBuilderModal() {
           schedule: meta.schedule,
         }),
       });
+      if (!activateRes.ok) {
+        throw new Error(`فشل تفعيل سير العمل (${activateRes.status})`);
+      }
 
-      // Step D: Sync store
-      updateMeta({ id: workflowId, status: "active" });
-      markClean();
+      // Step D: Sync store atomically (single set call — no dirty-badge flicker)
+      launchClean(workflowId!);
+    } catch (err) {
+      console.error("[handleLaunch]", err);
+      // Surface error to user — replace with toast if available
+      alert(err instanceof Error ? err.message : "حدث خطأ أثناء الإطلاق");
     } finally {
+      launchInFlight.current = false;
       setSaving(false);
     }
   };

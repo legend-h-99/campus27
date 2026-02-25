@@ -1,20 +1,22 @@
 // src/components/workflows/workflow-top-bar.tsx
 "use client";
 
-import { Save, X, Zap, Edit2 } from "lucide-react";
+import { Save, X, Zap, Edit2, Square } from "lucide-react";
 import { useState } from "react";
 import { useWorkflowStore } from "@/stores/workflow-store";
 
 interface WorkflowTopBarProps {
   onSave: () => Promise<void>;
+  onLaunch: () => Promise<void>;
 }
 
-export function WorkflowTopBar({ onSave }: WorkflowTopBarProps) {
+export function WorkflowTopBar({ onSave, onLaunch }: WorkflowTopBarProps) {
   const meta = useWorkflowStore((s) => s.meta);
   const updateMeta = useWorkflowStore((s) => s.updateMeta);
   const closeBuilder = useWorkflowStore((s) => s.closeBuilder);
   const isDirty = useWorkflowStore((s) => s.isDirty);
   const isSaving = useWorkflowStore((s) => s.isSaving);
+  const isActive = meta.status === "active";
   const [editingName, setEditingName] = useState(false);
 
   return (
@@ -59,6 +61,14 @@ export function WorkflowTopBar({ onSave }: WorkflowTopBarProps) {
           </button>
         )}
 
+        {isActive && !isDirty && (
+          <span
+            className="shrink-0 rounded-full px-2 py-0.5 text-xs font-medium"
+            style={{ background: "rgba(52,199,89,0.12)", color: "#1a7a35" }}
+          >
+            نشط ✓
+          </span>
+        )}
         {isDirty && (
           <span
             className="shrink-0 rounded-full px-2 py-0.5 text-xs"
@@ -76,7 +86,7 @@ export function WorkflowTopBar({ onSave }: WorkflowTopBarProps) {
       <div className="flex items-center gap-2">
         <button
           onClick={onSave}
-          disabled={isSaving || !isDirty}
+          disabled={isSaving || !isDirty || !meta.id}
           className="flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold transition-all disabled:opacity-40"
           style={{
             background: isDirty ? "var(--bs-signal)" : "rgba(28,28,30,0.06)",
@@ -87,14 +97,16 @@ export function WorkflowTopBar({ onSave }: WorkflowTopBarProps) {
           {isSaving ? "جاري الحفظ..." : "حفظ"}
         </button>
         <button
-          className="flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold transition-all hover:opacity-80"
+          onClick={onLaunch}
+          disabled={isSaving}
+          className="flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold transition-all disabled:opacity-40 hover:opacity-80"
           style={{
-            background: "rgba(28,28,30,0.06)",
-            color: "var(--bs-steel)",
+            background: isActive ? "rgba(28,28,30,0.06)" : "var(--bs-signal)",
+            color: isActive ? "var(--bs-steel)" : "#fff",
           }}
         >
-          <Zap size={12} />
-          إطلاق
+          {isActive ? <Square size={12} /> : <Zap size={12} />}
+          {isSaving ? "جاري التفعيل..." : isActive ? "إيقاف" : "إطلاق"}
         </button>
         <button
           onClick={closeBuilder}

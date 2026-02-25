@@ -12,6 +12,7 @@ import { WorkflowRightPanel } from "./workflow-right-panel";
 export function WorkflowBuilderModal() {
   const isOpen = useWorkflowStore((s) => s.isOpen);
   const meta = useWorkflowStore((s) => s.meta);
+  const updateMeta = useWorkflowStore((s) => s.updateMeta);
   const nodes = useWorkflowStore((s) => s.nodes);
   const closeBuilder = useWorkflowStore((s) => s.closeBuilder);
   const setSaving = useWorkflowStore((s) => s.setSaving);
@@ -70,6 +71,63 @@ export function WorkflowBuilderModal() {
     }
   };
 
+  const handleLaunch = async () => {
+    setSaving(true);
+    try {
+      let workflowId = meta.id;
+
+      // Step A: Create the workflow if it doesn't exist yet
+      if (!workflowId) {
+        const createRes = await fetch("/api/v1/workflows", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: meta.name,
+            description: meta.description,
+            role: meta.role,
+            schedule: meta.schedule,
+          }),
+        });
+        const created = await createRes.json();
+        workflowId = created.data.id as string;
+      }
+
+      // Step B: Persist nodes (atomic replace)
+      await fetch(`/api/v1/workflows/${workflowId}/nodes`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nodes: nodes.map((n, i) => ({
+            type: n.type,
+            title: n.title,
+            description: n.description,
+            position: i,
+            config: n.config,
+          })),
+        }),
+      });
+
+      // Step C: Activate — set status to active + persist meta fields
+      await fetch(`/api/v1/workflows/${workflowId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          status: "active",
+          name: meta.name,
+          description: meta.description,
+          role: meta.role,
+          schedule: meta.schedule,
+        }),
+      });
+
+      // Step D: Sync store
+      updateMeta({ id: workflowId, status: "active" });
+      markClean();
+    } finally {
+      setSaving(false);
+    }
+  };
+
   if (!isOpen) return null;
 
   return createPortal(
@@ -85,7 +143,7 @@ export function WorkflowBuilderModal() {
 
       {/* Main area */}
       <div className="flex flex-1 flex-col overflow-hidden">
-        <WorkflowTopBar onSave={handleSave} />
+        <WorkflowTopBar onSave={handleSave} onLaunch={handleLaunch} />
         <div className="flex flex-1 overflow-hidden">
           <WorkflowCanvas />
           <WorkflowRightPanel />

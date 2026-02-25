@@ -36,8 +36,10 @@ import {
   HelpCircle,
   TrendingUp,
   ArrowRightLeft,
+  Workflow,
   type LucideIcon,
 } from "lucide-react";
+import { useWorkflowStore } from "@/stores/workflow-store";
 import { type Permission, hasAnyPermission } from "@/lib/permissions";
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
@@ -277,6 +279,7 @@ export function Sidebar({ userPermissions }: SidebarProps) {
   const { data: session } = useSession();
   const { isOpen, isMobileOpen, mode, toggle, closeMobile, updateForScreenSize } =
     useSidebarStore();
+  const openWorkflowBuilder = useWorkflowStore((s) => s.openBuilder);
   const isRtl = locale === "ar";
   const [searchQuery, setSearchQuery] = useState("");
   const [showCapacityCard, setShowCapacityCard] = useState(true);
@@ -650,6 +653,16 @@ export function Sidebar({ userPermissions }: SidebarProps) {
           {/* ═══ Bottom Section: Settings/Help items ═══ */}
           {/* 48px top spacing */}
           <div className="border-t border-slate-200/60 pt-2">
+            {/* Workflow builder trigger */}
+            <button
+              onClick={() => { openWorkflowBuilder(); closeMobile(); }}
+              className="mx-4 mb-1 flex w-[calc(100%-32px)] items-center gap-3 rounded-xl px-3 py-2.5 text-slate-600 transition-all hover:bg-teal-50 hover:text-teal-700"
+            >
+              <Workflow className="h-5 w-5 shrink-0 text-teal-600/70" />
+              <span className="flex-1 truncate text-[14px] font-medium">
+                {t("workflows")}
+              </span>
+            </button>
             <ul className="space-y-1" role="list">
               {filteredBottomItems.map((item) =>
                 renderNavItem(item, true, closeMobile)
@@ -772,6 +785,25 @@ export function Sidebar({ userPermissions }: SidebarProps) {
       {/* ═══ Bottom Section: Settings + Help ═══ */}
       {/* 48px top spacing from card area */}
       <div className="border-t border-slate-200/60 pt-2">
+        {/* Workflow builder trigger */}
+        <button
+          onClick={() => openWorkflowBuilder()}
+          title={!sidebarExpanded ? t("workflows") : undefined}
+          aria-label={t("workflows")}
+          className={cn(
+            "group flex items-center rounded-xl transition-all duration-200 text-slate-600 hover:text-teal-700",
+            sidebarExpanded
+              ? "mx-4 mb-1 w-[calc(100%-32px)] gap-3 px-3 py-2.5"
+              : "mx-2 mb-1 justify-center px-0 py-2.5"
+          )}
+        >
+          <Workflow className="h-5 w-5 shrink-0 text-teal-600/70 group-hover:scale-110 group-hover:text-teal-600 transition-all duration-200" />
+          {sidebarExpanded && (
+            <span className="flex-1 truncate text-[14px] font-medium">
+              {t("workflows")}
+            </span>
+          )}
+        </button>
         <ul className="space-y-1" role="list">
           {filteredBottomItems.map((item) => renderNavItem(item, sidebarExpanded))}
         </ul>

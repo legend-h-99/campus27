@@ -9,6 +9,7 @@ import { AIChatbot } from "@/components/ai/ai-chatbot";
 import { CommandPalette } from "@/components/ui/command-palette";
 import { PageTransition } from "@/components/ui/page-transition";
 import { ToastContainer } from "@/components/ui/toast";
+import { WorkflowBuilderModal } from "@/components/workflows/workflow-builder-modal";
 
 export default async function DashboardLayout({
   children,
@@ -52,6 +53,7 @@ export default async function DashboardLayout({
         <AIChatbot />
         <CommandPalette />
         <ToastContainer />
+        <WorkflowBuilderModal />
       </div>
     </SessionProvider>
   );

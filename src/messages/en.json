@@ -83,7 +83,8 @@
     "users": "Users",
     "main": "Main",
     "management": "Management",
-    "advanced": "Advanced"
+    "advanced": "Advanced",
+    "workflows": "Workflows"
   },
   "dashboard": {
     "welcome": "Welcome",

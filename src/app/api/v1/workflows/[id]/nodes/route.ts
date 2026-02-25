@@ -45,7 +45,7 @@ export async function PUT(req: NextRequest, { params }: Ctx) {
           title: n.title,
           description: n.description ?? null,
           position: n.position ?? i,
-          config: n.config ?? {},
+          config: (n.config ?? {}) as object,
         })),
       }),
     ]);

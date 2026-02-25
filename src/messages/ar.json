@@ -83,7 +83,8 @@
     "users": "المستخدمون",
     "main": "الرئيسية",
     "management": "الإدارة والتشغيل",
-    "advanced": "متقدم"
+    "advanced": "متقدم",
+    "workflows": "سير العمل الآلي"
   },
   "dashboard": {
     "welcome": "مرحبًا",

@@ -1,7 +1,6 @@
 // src/components/workflows/workflow-right-panel.tsx
 "use client";
 
-import { useShallow } from "zustand/react/shallow";
 import { useWorkflowStore } from "@/stores/workflow-store";
 import { PALETTE_BLOCKS } from "./palette-blocks-data";
 import { PaletteBlockCard } from "./palette-block";
@@ -14,9 +13,8 @@ const ROLES = [
 ];
 
 export function WorkflowRightPanel() {
-  const { meta, updateMeta } = useWorkflowStore(
-    useShallow((s) => ({ meta: s.meta, updateMeta: s.updateMeta }))
-  );
+  const meta = useWorkflowStore((s) => s.meta);
+  const updateMeta = useWorkflowStore((s) => s.updateMeta);
 
   return (
     <aside

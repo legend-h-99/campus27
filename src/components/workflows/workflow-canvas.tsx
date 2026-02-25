@@ -17,7 +17,6 @@ import {
 } from "@dnd-kit/sortable";
 import { Plus } from "lucide-react";
 import { useState } from "react";
-import { useShallow } from "zustand/react/shallow";
 import { useWorkflowStore } from "@/stores/workflow-store";
 import { isPaletteId, paletteKeyFrom } from "./workflow-types";
 import { paletteBlockByKey } from "./palette-blocks-data";
@@ -25,13 +24,9 @@ import { WorkflowNode } from "./workflow-node";
 import { WorkflowConnector } from "./workflow-connector";
 
 export function WorkflowCanvas() {
-  const { nodes, addNode, reorderNodes } = useWorkflowStore(
-    useShallow((s) => ({
-      nodes: s.nodes,
-      addNode: s.addNode,
-      reorderNodes: s.reorderNodes,
-    }))
-  );
+  const nodes = useWorkflowStore((s) => s.nodes);
+  const addNode = useWorkflowStore((s) => s.addNode);
+  const reorderNodes = useWorkflowStore((s) => s.reorderNodes);
 
   const [activeDragId, setActiveDragId] = useState<string | null>(null);
 

@@ -3,7 +3,6 @@
 
 import { Save, X, Zap, Edit2 } from "lucide-react";
 import { useState } from "react";
-import { useShallow } from "zustand/react/shallow";
 import { useWorkflowStore } from "@/stores/workflow-store";
 
 interface WorkflowTopBarProps {
@@ -11,16 +10,11 @@ interface WorkflowTopBarProps {
 }
 
 export function WorkflowTopBar({ onSave }: WorkflowTopBarProps) {
-  const { meta, updateMeta, closeBuilder, isDirty, isSaving } =
-    useWorkflowStore(
-      useShallow((s) => ({
-        meta: s.meta,
-        updateMeta: s.updateMeta,
-        closeBuilder: s.closeBuilder,
-        isDirty: s.isDirty,
-        isSaving: s.isSaving,
-      }))
-    );
+  const meta = useWorkflowStore((s) => s.meta);
+  const updateMeta = useWorkflowStore((s) => s.updateMeta);
+  const closeBuilder = useWorkflowStore((s) => s.closeBuilder);
+  const isDirty = useWorkflowStore((s) => s.isDirty);
+  const isSaving = useWorkflowStore((s) => s.isSaving);
   const [editingName, setEditingName] = useState(false);
 
   return (

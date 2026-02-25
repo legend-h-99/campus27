@@ -3,7 +3,6 @@
 
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
-import { useShallow } from "zustand/react/shallow";
 import { useWorkflowStore } from "@/stores/workflow-store";
 import { WorkflowTopBar } from "./workflow-top-bar";
 import { WorkflowSidebar } from "./workflow-sidebar";
@@ -11,17 +10,12 @@ import { WorkflowCanvas } from "./workflow-canvas";
 import { WorkflowRightPanel } from "./workflow-right-panel";
 
 export function WorkflowBuilderModal() {
-  const { isOpen, meta, nodes, closeBuilder, setSaving, markClean } =
-    useWorkflowStore(
-      useShallow((s) => ({
-        isOpen: s.isOpen,
-        meta: s.meta,
-        nodes: s.nodes,
-        closeBuilder: s.closeBuilder,
-        setSaving: s.setSaving,
-        markClean: s.markClean,
-      }))
-    );
+  const isOpen = useWorkflowStore((s) => s.isOpen);
+  const meta = useWorkflowStore((s) => s.meta);
+  const nodes = useWorkflowStore((s) => s.nodes);
+  const closeBuilder = useWorkflowStore((s) => s.closeBuilder);
+  const setSaving = useWorkflowStore((s) => s.setSaving);
+  const markClean = useWorkflowStore((s) => s.markClean);
 
   // Close on Escape
   useEffect(() => {

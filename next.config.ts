@@ -6,6 +6,9 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 const nextConfig: NextConfig = {
   output: "standalone",
   serverExternalPackages: ["pg", "@prisma/adapter-pg", "@prisma/client"],
+  turbopack: {
+    root: process.cwd(),
+  },
   images: {
     remotePatterns: [
       {

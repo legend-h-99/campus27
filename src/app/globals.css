@@ -1222,3 +1222,67 @@ button:not(:disabled):active {
     transform: scale(0.95);
   }
 }
+
+/* ═══ Cinematic Marketing Variables ═══ */
+:root {
+  --c27-dark: #0F172A;
+  --c27-accent-orange: #F97316;
+  --font-drama: "Playfair Display", Georgia, serif;
+}
+
+/* ═══ Cinematic Keyframes ═══ */
+@keyframes cursor-move {
+  0%   { transform: translate(0px, 0px); opacity: 0; }
+  5%   { opacity: 1; }
+  20%  { transform: translate(40px, 10px); }
+  35%  { transform: translate(40px, 10px) scale(0.92); }
+  50%  { transform: translate(40px, 10px) scale(1); }
+  65%  { transform: translate(90px, 48px); }
+  80%  { transform: translate(90px, 48px) scale(0.92); }
+  90%  { transform: translate(90px, 48px) scale(1); opacity: 1; }
+  100% { transform: translate(90px, 48px); opacity: 0; }
+}
+
+@keyframes scan-line {
+  0%   { transform: translateY(0); opacity: 0.8; }
+  100% { transform: translateY(80px); opacity: 0; }
+}
+
+@keyframes ekg-draw {
+  0%   { stroke-dashoffset: 400; }
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes concentric-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes border-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(27, 169, 160, 0.3); }
+  50%       { box-shadow: 0 0 0 6px rgba(27, 169, 160, 0); }
+}
+
+@keyframes search-expand {
+  from { max-width: 44px; }
+  to   { max-width: 400px; }
+}
+
+@keyframes float-continuous {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+
+@keyframes word-reveal {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══ Reduced Motion Safety ═══ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

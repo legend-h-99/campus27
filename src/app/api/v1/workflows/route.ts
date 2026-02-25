@@ -1,26 +1,34 @@
 // src/app/api/v1/workflows/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
   const start = Date.now();
   const requestId = crypto.randomUUID();
   try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { success: false, data: null, error: { code: "UNAUTHORIZED", message: "Unauthorized" }, meta: { requestId, durationMs: Date.now() - start } },
+        { status: 401 }
+      );
+    }
     const body = await req.json();
-    const { name, description, role, createdById } = body as {
+    const { name, description, role, schedule } = body as {
       name: string;
       description?: string;
       role?: string;
-      createdById: string;
+      schedule?: string;
     };
-    if (!name || !createdById) {
+    if (!name) {
       return NextResponse.json(
-        { success: false, data: null, error: { code: "MISSING_FIELDS", message: "name and createdById required" }, meta: { requestId, durationMs: Date.now() - start } },
+        { success: false, data: null, error: { code: "MISSING_FIELDS", message: "name is required" }, meta: { requestId, durationMs: Date.now() - start } },
         { status: 400 }
       );
     }
     const workflow = await prisma.workflow.create({
-      data: { name, description: description ?? null, role: role ?? null, createdById },
+      data: { name, description: description ?? null, role: role ?? null, schedule: schedule ?? null, createdById: session.user.id },
       include: { nodes: { orderBy: { position: "asc" } } },
     });
     return NextResponse.json(

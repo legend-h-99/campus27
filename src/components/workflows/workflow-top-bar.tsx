@@ -69,7 +69,7 @@ export function WorkflowTopBar({ onSave, onLaunch }: WorkflowTopBarProps) {
             نشط ✓
           </span>
         )}
-        {isDirty && (
+        {isDirty && !!meta.id && (
           <span
             className="shrink-0 rounded-full px-2 py-0.5 text-xs"
             style={{
@@ -106,7 +106,7 @@ export function WorkflowTopBar({ onSave, onLaunch }: WorkflowTopBarProps) {
           }}
         >
           {isActive ? <Square size={12} /> : <Zap size={12} />}
-          {isSaving ? "جاري التفعيل..." : isActive ? "إيقاف" : "إطلاق"}
+          {isActive ? "إيقاف" : "إطلاق"}
         </button>
         <button
           onClick={closeBuilder}

@@ -47,3 +47,8 @@ firebase-debug.log
 
 # claude worktrees
 .claude/worktrees/
+.claude/settings.local.json
+
+# playwright & serena tool artifacts
+.playwright-mcp/
+.serena/

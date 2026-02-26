@@ -7,10 +7,10 @@ export async function seedAdminUsers(
   console.log("  Seeding admin & VP users...");
 
   const superAdmin = await prisma.user.upsert({
-    where: { email: "admin@campus27.sa" },
+    where: { email: "admin@saohil1.sa" },
     update: {},
     create: {
-      email: "admin@campus27.sa",
+      email: "admin@saohil1.sa",
       passwordHash,
       nameAr: "مدير النظام",
       nameEn: "System Admin",
@@ -20,10 +20,10 @@ export async function seedAdminUsers(
   });
 
   const dean = await prisma.user.upsert({
-    where: { email: "dean@campus27.sa" },
+    where: { email: "dean@saohil1.sa" },
     update: {},
     create: {
-      email: "dean@campus27.sa",
+      email: "dean@saohil1.sa",
       passwordHash,
       nameAr: "د. أحمد بن محمد العتيبي",
       nameEn: "Dr. Ahmed Al-Otaibi",
@@ -33,10 +33,10 @@ export async function seedAdminUsers(
   });
 
   const vpTrainers = await prisma.user.upsert({
-    where: { email: "vp.trainers@campus27.sa" },
+    where: { email: "vp.trainers@saohil1.sa" },
     update: {},
     create: {
-      email: "vp.trainers@campus27.sa",
+      email: "vp.trainers@saohil1.sa",
       passwordHash,
       nameAr: "د. سعد بن عبدالله الغامدي",
       nameEn: "Dr. Saad Al-Ghamdi",
@@ -46,10 +46,10 @@ export async function seedAdminUsers(
   });
 
   const vpTrainees = await prisma.user.upsert({
-    where: { email: "vp.trainees@campus27.sa" },
+    where: { email: "vp.trainees@saohil1.sa" },
     update: {},
     create: {
-      email: "vp.trainees@campus27.sa",
+      email: "vp.trainees@saohil1.sa",
       passwordHash,
       nameAr: "د. عبدالرحمن بن سليمان الراشد",
       nameEn: "Dr. Abdulrahman Al-Rashed",
@@ -59,10 +59,10 @@ export async function seedAdminUsers(
   });
 
   const vpQuality = await prisma.user.upsert({
-    where: { email: "vp.quality@campus27.sa" },
+    where: { email: "vp.quality@saohil1.sa" },
     update: {},
     create: {
-      email: "vp.quality@campus27.sa",
+      email: "vp.quality@saohil1.sa",
       passwordHash,
       nameAr: "د. فاطمة بنت خالد المطيري",
       nameEn: "Dr. Fatima Al-Mutairi",
@@ -72,10 +72,10 @@ export async function seedAdminUsers(
   });
 
   const accountant = await prisma.user.upsert({
-    where: { email: "accountant@campus27.sa" },
+    where: { email: "accountant@saohil1.sa" },
     update: {},
     create: {
-      email: "accountant@campus27.sa",
+      email: "accountant@saohil1.sa",
       passwordHash,
       nameAr: "أ. سلطان الحربي",
       nameEn: "Mr. Sultan Al-Harbi",
@@ -85,10 +85,10 @@ export async function seedAdminUsers(
   });
 
   const qualityOfficer = await prisma.user.upsert({
-    where: { email: "quality@campus27.sa" },
+    where: { email: "quality@saohil1.sa" },
     update: {},
     create: {
-      email: "quality@campus27.sa",
+      email: "quality@saohil1.sa",
       passwordHash,
       nameAr: "د. منال الزهراني",
       nameEn: "Dr. Manal Al-Zahrani",

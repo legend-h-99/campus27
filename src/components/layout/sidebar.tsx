@@ -44,6 +44,7 @@ import { type Permission, hasAnyPermission } from "@/lib/permissions";
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { UserSwitcher } from "@/components/layout/user-switcher";
+import { BRAND } from "@/config/brand";
 
 /* ═══════════════════════════════════════════
    TYPES & NAVIGATION CONFIG
@@ -542,7 +543,7 @@ export function Sidebar({ userPermissions }: SidebarProps) {
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-teal-600 to-aqua-600 shadow-md shadow-teal-600/15">
                 <GraduationCap className="h-6 w-6 text-white" />
               </div>
-              <span className="text-[17px] font-bold text-slate-800">Saohil1</span>
+              <span className="text-[17px] font-bold text-slate-800">{BRAND.nameEn}</span>
             </Link>
             <button
               onClick={closeMobile}
@@ -641,10 +642,10 @@ export function Sidebar({ userPermissions }: SidebarProps) {
       >
         {sidebarExpanded ? (
           <span className="text-sm font-semibold tracking-tight text-[var(--color-primary)]">
-            سهيل
+            {BRAND.nameAr}
           </span>
         ) : (
-          <span className="text-base font-bold text-[var(--color-primary)]">س</span>
+          <span className="text-base font-bold text-[var(--color-primary)]">{BRAND.iconLetter}</span>
         )}
       </div>
 

@@ -93,7 +93,7 @@
   /* ─── Text ─── */
   --text-primary: #0F172A;
   --text-secondary: #64748B;
-  --text-muted: #94A3B8;
+  --text-muted: #94A3B8;   /* decorative only — do NOT use for body text (2.56:1 contrast) */
 
   /* ─── Primary surface for active states ─── */
   --primary-surface: rgba(27, 169, 160, 0.08);
@@ -991,10 +991,9 @@ button:disabled {
    MICRO-INTERACTIONS — Saohil1
    ═══════════════════════════════════════════ */
 
-/* Glass cards: lift on hover (reinforces existing stats-card hover) */
+/* Glass cards: subtle depth on hover */
 .glass-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 32px rgba(27, 169, 160, 0.12);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 /* Buttons: spring press on active */

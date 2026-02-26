@@ -1,4 +1,5 @@
 import { Link } from "@/i18n/routing";
+import { BRAND } from "@/config/brand";
 
 interface MarketingFooterProps {
   locale: string;
@@ -55,13 +56,13 @@ export function MarketingFooter({ locale }: MarketingFooterProps) {
                   className="flex h-8 w-8 items-center justify-center rounded-xl font-bold text-sm text-white"
                   style={{ background: "var(--bs-signal)" }}
                 >
-                  س
+                  {BRAND.iconLetter}
                 </div>
                 <span
                   className="text-base font-bold text-white"
                   style={{ fontFamily: "var(--bs-grotesk)" }}
                 >
-                  سهيل
+                  {BRAND.nameAr}
                 </span>
               </div>
               <p
@@ -110,7 +111,7 @@ export function MarketingFooter({ locale }: MarketingFooterProps) {
               className="text-xs"
               style={{ color: "rgba(255,255,255,0.3)", fontFamily: "var(--bs-mono)" }}
             >
-              © {year} سهيل. {isAr ? "جميع الحقوق محفوظة." : "All rights reserved."}
+              © {year} {BRAND.nameAr}. {isAr ? "جميع الحقوق محفوظة." : "All rights reserved."}
             </p>
 
             {/* SYSTEM OPERATIONAL */}

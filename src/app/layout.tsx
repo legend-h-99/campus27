@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
+import { BRAND } from "@/config/brand";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Saohil1 - نظام إدارة الكليات التقنية",
+  title: `${BRAND.nameEn} - ${BRAND.taglineAr}`,
   description: "منصة SaaS شاملة لإدارة الكليات التقنية",
 };
 

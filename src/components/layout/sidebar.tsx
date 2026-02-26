@@ -45,6 +45,10 @@ import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { UserSwitcher } from "@/components/layout/user-switcher";
 
+// Sidebar dimensions
+const SIDEBAR_EXPANDED = 240;   // px — matches responsive-content.tsx offsets
+const SIDEBAR_COLLAPSED = 64;   // px — icons-only
+
 /* ═══════════════════════════════════════════
    TYPES & NAVIGATION CONFIG
    ═══════════════════════════════════════════ */
@@ -329,13 +333,6 @@ export function Sidebar({ userPermissions }: SidebarProps) {
 
   const visibleSections = getFilteredSections();
 
-  // ═══ Width class ═══
-  const getWidthClass = () => {
-    if (mode === "hidden") return "w-[280px]";
-    if (mode === "collapsed") return isOpen ? "w-[280px]" : "w-20";
-    return isOpen ? "w-[280px]" : "w-20";
-  };
-
   // ═══ User info ═══
   const userName = session?.user
     ? locale === "ar" ? session.user.nameAr : session.user.nameEn
@@ -349,8 +346,6 @@ export function Sidebar({ userPermissions }: SidebarProps) {
      ═══════════════════════════════════════════ */
 
   // ═══ Single Nav Item ═══
-  // Spacing: py-2.5 (10px) = closest to reference ~40px total height with icon
-  // Gap between items: space-y-1 (4px) matching reference
   const renderNavItem = (item: NavItem, expanded: boolean, onClickExtra?: () => void) => {
     const isActive =
       pathname === item.href ||
@@ -363,64 +358,31 @@ export function Sidebar({ userPermissions }: SidebarProps) {
           href={item.href}
           onClick={onClickExtra}
           className={cn(
-            "nav-item group relative flex items-center rounded-xl transition-all duration-200",
-            // Expanded: px-4 (16px sides), py-2.5 (10px top/bottom) → ~40px total
-            // Collapsed: centered icon
-            expanded
-              ? "mx-4 gap-3 px-3 py-2.5"
-              : "mx-2 justify-center px-0 py-2.5",
+            "nav-item flex items-center rounded-lg py-2 text-sm transition-colors",
+            expanded ? "gap-3 px-3" : "justify-center px-0",
             isActive
-              ? "nav-item-active bg-gradient-to-r from-teal-600 to-aqua-600 text-white shadow-lg shadow-teal-600/25"
-              : "text-slate-600 hover:text-teal-700"
+              ? "bg-[var(--primary-surface)] font-medium text-[var(--color-primary)]"
+              : "text-[var(--text-secondary)] hover:bg-[var(--surface-2)] hover:text-[var(--text-primary)]"
           )}
           title={!expanded ? t(item.labelKey) : undefined}
           aria-label={t(item.labelKey)}
           aria-current={isActive ? "page" : undefined}
         >
-          {/* Active indicator bar (left/right edge) */}
-          {isActive && (
+          <Icon className="h-[18px] w-[18px] shrink-0" />
+          {expanded && <span className="truncate">{t(item.labelKey)}</span>}
+          {expanded && item.badge && (
             <span
               className={cn(
-                "absolute top-1/2 h-6 w-[3px] -translate-y-1/2 rounded-full bg-white/80",
-                isRtl ? "right-0 rounded-r-none" : "left-0 rounded-l-none"
+                "ms-auto rounded-full px-1.5 py-0.5 text-[10px] font-semibold",
+                item.badgeType === "red"
+                  ? "bg-red-100 text-red-600"
+                  : "bg-[var(--primary-surface)] text-[var(--color-primary)]"
               )}
-            />
+            >
+              {item.badge}
+            </span>
           )}
-
-          <Icon
-            className={cn(
-              "h-5 w-5 shrink-0 transition-all duration-200",
-              isActive
-                ? "text-white"
-                : "text-teal-600/70 group-hover:text-teal-600 group-hover:scale-110"
-            )}
-          />
-
-          {expanded && (
-            <>
-              <span className="flex-1 truncate text-[14px] font-medium">
-                {t(item.labelKey)}
-              </span>
-
-              {/* Badge - matching reference badge style */}
-              {item.badge && (
-                <span
-                  className={cn(
-                    "flex h-[22px] min-w-[22px] items-center justify-center rounded-md px-1.5 text-[11px] font-bold",
-                    isActive
-                      ? "bg-white/20 text-white"
-                      : item.badgeType === "red"
-                        ? "bg-red-500 text-white shadow-sm shadow-red-500/30"
-                        : "bg-teal-100 text-teal-700"
-                  )}
-                >
-                  {item.badge}
-                </span>
-              )}
-            </>
-          )}
-
-          {/* Collapsed mode: badge indicator */}
+          {/* Collapsed mode: badge dot indicator */}
           {!expanded && item.badge && (
             <span
               className={cn(
@@ -437,23 +399,7 @@ export function Sidebar({ userPermissions }: SidebarProps) {
     );
   };
 
-  // ═══ Section Title ═══
-  // Spacing: 16px gap between section title and first item (pb-1 = 4px, items have own padding)
-  // 16px between sections (handled by parent spacing)
-  const renderSectionTitle = (titleKey?: string, expanded?: boolean) => {
-    if (!titleKey || !expanded) return null;
-    return (
-      <div className="px-4 pb-1 pt-4">
-        <p className="truncate text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-400/80">
-          {t(titleKey)}
-        </p>
-      </div>
-    );
-  };
-
   // ═══ Capacity Card (matching "Used capacity 60%" in reference) ═══
-  // Card spacing: 48px margin top/bottom (my-6 = 24px * 2 ≈ 48px visual), 16px sides
-  // Card content: 56px top padding for circle, 208px total height
   const renderCapacityCard = (expanded: boolean) => {
     if (!expanded || !showCapacityCard) return null;
 
@@ -494,10 +440,9 @@ export function Sidebar({ userPermissions }: SidebarProps) {
   };
 
   // ═══ User Profile Footer ═══
-  // Spacing: 40px margin top, 16px bottom padding, 48px total height for row
   const renderUserProfile = (expanded: boolean) => (
     <div
-      className="mt-auto border-t border-teal-600/8 px-3 py-3"
+      className="shrink-0 border-t border-[var(--border-default)] px-3 py-3"
       role="region"
       aria-label={locale === "ar" ? "ملف المستخدم" : "User Profile"}
     >
@@ -596,7 +541,6 @@ export function Sidebar({ userPermissions }: SidebarProps) {
           aria-label={locale === "ar" ? "القائمة الرئيسية" : "Main Navigation"}
         >
           {/* ═══ Header: Logo + Close ═══ */}
-          {/* Spacing: pt-8 (32px top), px-4 (16px sides) */}
           <div className="flex items-center justify-between px-4 pb-6 pt-8">
             <Link href="/" className="flex items-center gap-3" onClick={closeMobile}>
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-teal-600 to-aqua-600 shadow-md shadow-teal-600/15">
@@ -614,7 +558,6 @@ export function Sidebar({ userPermissions }: SidebarProps) {
           </div>
 
           {/* ═══ Search Bar ═══ */}
-          {/* Spacing: mx-4 (16px sides), mb-4 (16px bottom) */}
           <div className="mx-4 mb-4">
             <div className="relative">
               <Search className="pointer-events-none absolute start-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -634,10 +577,14 @@ export function Sidebar({ userPermissions }: SidebarProps) {
           <nav className="sidebar-nav flex-1 overflow-y-auto" aria-label="Primary">
             {visibleSections.map((section, idx) => (
               <div key={idx}>
-                {/* 16px spacing between sections */}
                 {idx > 0 && <div className="my-2" />}
-                {renderSectionTitle(section.titleKey, true)}
-                {/* 4px between items = space-y-1 */}
+                {section.titleKey && (
+                  <div className="px-4 pb-1 pt-4">
+                    <p className="truncate text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-400/80">
+                      {t(section.titleKey)}
+                    </p>
+                  </div>
+                )}
                 <ul className="space-y-1" role="list">
                   {section.items.map((item) =>
                     renderNavItem(item, true, closeMobile)
@@ -651,7 +598,6 @@ export function Sidebar({ userPermissions }: SidebarProps) {
           </nav>
 
           {/* ═══ Bottom Section: Settings/Help items ═══ */}
-          {/* 48px top spacing */}
           <div className="border-t border-slate-200/60 pt-2">
             {/* Workflow builder trigger */}
             <button
@@ -678,139 +624,101 @@ export function Sidebar({ userPermissions }: SidebarProps) {
   }
 
   /* ═══════════════════════════════════════════
-     TABLET + DESKTOP: Fixed Sidebar
+     TABLET + DESKTOP: Fixed Collapsible Sidebar
      ═══════════════════════════════════════════ */
   return (
     <aside
       className={cn(
-        "fixed top-0 z-40 flex h-screen flex-col glass-sidebar transition-all duration-300",
-        getWidthClass(),
+        "fixed top-0 z-40 hidden h-screen flex-col glass-sidebar overflow-hidden transition-all duration-200 ease-in-out md:flex",
+        isOpen ? "w-[240px]" : "w-16",
         isRtl ? "right-0" : "left-0"
       )}
       role="navigation"
       aria-label={locale === "ar" ? "القائمة الرئيسية" : "Main Navigation"}
     >
-      {/* ═══ Header: Logo + Collapse toggle ═══ */}
-      {/* Spacing: pt-8 (32px top), px-4 (16px sides) */}
+      {/* ═══ Brand header ═══ */}
       <div
         className={cn(
-          "flex items-center",
-          sidebarExpanded
-            ? "justify-between px-4 pb-6 pt-8"
-            : "flex-col justify-center gap-3 px-2 pb-4 pt-6"
+          "flex h-14 shrink-0 items-center border-b border-[var(--border-default)]",
+          isOpen ? "px-4" : "justify-center"
         )}
       >
-        {sidebarExpanded ? (
-          <>
-            <Link href="/" className="flex items-center gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-teal-600 to-aqua-600 shadow-md shadow-teal-600/15">
-                <GraduationCap className="h-6 w-6 text-white" />
-              </div>
-              <span className="text-[17px] font-bold text-slate-800">Saohil1</span>
-            </Link>
-            <button
-              onClick={toggle}
-              className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
-              aria-label={locale === "ar" ? "طي القائمة" : "Collapse sidebar"}
-            >
-              {isRtl ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
-            </button>
-          </>
+        {isOpen ? (
+          <span className="text-sm font-semibold tracking-tight text-[var(--color-primary)]">
+            سهيل
+          </span>
         ) : (
-          <>
-            <Link href="/">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-teal-600 to-aqua-600 shadow-md shadow-teal-600/15 transition-transform hover:scale-105">
-                <GraduationCap className="h-5 w-5 text-white" />
-              </div>
-            </Link>
-            <button
-              onClick={toggle}
-              className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
-              aria-label={locale === "ar" ? "فتح القائمة" : "Expand sidebar"}
-            >
-              {isRtl ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-            </button>
-          </>
+          <span className="text-base font-bold text-[var(--color-primary)]">س</span>
         )}
       </div>
 
-      {/* ═══ Search Bar ═══ */}
-      {/* Spacing: mx-4 (16px sides), mb-4 (16px bottom) matching reference: 32px total vertical */}
-      {sidebarExpanded ? (
-        <div className="mx-4 mb-4">
-          <div className="relative">
-            <Search className="pointer-events-none absolute start-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={locale === "ar" ? "ابحث عن أي شيء..." : "Search anything..."}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50/80 py-2.5 pe-4 ps-10 text-[13px] text-slate-700 outline-none transition-all placeholder:text-slate-400 focus:border-teal-400 focus:bg-white focus:shadow-sm focus:shadow-teal-600/10 focus:ring-2 focus:ring-teal-600/10"
-              dir={isRtl ? "rtl" : "ltr"}
-              aria-label={locale === "ar" ? "بحث في القائمة" : "Search navigation"}
-            />
-          </div>
-        </div>
-      ) : (
-        <div className="mb-2 flex justify-center">
-          <button
-            onClick={toggle}
-            className="rounded-xl p-2.5 text-slate-400 transition-colors hover:bg-teal-50 hover:text-teal-600"
-            title={locale === "ar" ? "بحث" : "Search"}
-            aria-label={locale === "ar" ? "فتح البحث" : "Open search"}
-          >
-            <Search className="h-5 w-5" />
-          </button>
-        </div>
-      )}
-
       {/* ═══ Main Navigation (scrollable middle) ═══ */}
-      <nav className="sidebar-nav flex-1 overflow-y-auto" aria-label="Primary">
+      <nav className="sidebar-nav flex-1 overflow-y-auto px-2 py-2" aria-label="Primary">
         {visibleSections.map((section, idx) => (
           <div key={idx}>
-            {/* 16px spacing between sections */}
-            {idx > 0 && (sidebarExpanded ? <div className="my-2" /> : <div className="my-1.5" />)}
-            {renderSectionTitle(section.titleKey, sidebarExpanded)}
-            {/* 4px between items = space-y-1 */}
-            <ul className="space-y-1" role="list">
-              {section.items.map((item) => renderNavItem(item, sidebarExpanded))}
+            {idx > 0 && <div className={isOpen ? "my-2" : "my-1.5"} />}
+            {section.titleKey && isOpen && (
+              <p className="mb-1 mt-5 px-3 text-[10px] font-medium uppercase tracking-widest text-[var(--text-muted)]">
+                {t(`nav.sections.${section.titleKey}`)}
+              </p>
+            )}
+            <ul className="space-y-0.5" role="list">
+              {section.items.map((item) => renderNavItem(item, isOpen))}
             </ul>
           </div>
         ))}
 
         {/* ═══ Capacity Card (only expanded) ═══ */}
-        {renderCapacityCard(sidebarExpanded)}
+        {renderCapacityCard(isOpen)}
       </nav>
 
-      {/* ═══ Bottom Section: Settings + Help ═══ */}
-      {/* 48px top spacing from card area */}
-      <div className="border-t border-slate-200/60 pt-2">
+      {/* ═══ Bottom Section: Settings + Workflows ═══ */}
+      <div className="shrink-0 border-t border-[var(--border-default)] px-2 py-2">
         {/* Workflow builder trigger */}
         <button
           onClick={() => openWorkflowBuilder()}
-          title={!sidebarExpanded ? t("workflows") : undefined}
+          title={!isOpen ? t("workflows") : undefined}
           aria-label={t("workflows")}
           className={cn(
-            "group flex items-center rounded-xl transition-all duration-200 text-slate-600 hover:text-teal-700",
-            sidebarExpanded
-              ? "mx-4 mb-1 w-[calc(100%-32px)] gap-3 px-3 py-2.5"
-              : "mx-2 mb-1 justify-center px-0 py-2.5"
+            "group mb-0.5 flex w-full items-center rounded-lg py-2 text-sm transition-colors",
+            isOpen ? "gap-3 px-3" : "justify-center px-0",
+            "text-[var(--text-secondary)] hover:bg-[var(--surface-2)] hover:text-[var(--text-primary)]"
           )}
         >
-          <Workflow className="h-5 w-5 shrink-0 text-teal-600/70 group-hover:scale-110 group-hover:text-teal-600 transition-all duration-200" />
-          {sidebarExpanded && (
-            <span className="flex-1 truncate text-[14px] font-medium">
-              {t("workflows")}
-            </span>
+          <Workflow className="h-[18px] w-[18px] shrink-0" />
+          {isOpen && (
+            <span className="truncate">{t("workflows")}</span>
           )}
         </button>
-        <ul className="space-y-1" role="list">
-          {filteredBottomItems.map((item) => renderNavItem(item, sidebarExpanded))}
+        <ul className="space-y-0.5" role="list">
+          {filteredBottomItems.map((item) => renderNavItem(item, isOpen))}
         </ul>
       </div>
 
       {/* ═══ User Profile Footer ═══ */}
-      {renderUserProfile(sidebarExpanded)}
+      {renderUserProfile(isOpen)}
+
+      {/* ═══ Toggle collapse button ═══ */}
+      <div className="mt-auto shrink-0 border-t border-[var(--border-default)] p-2">
+        <button
+          onClick={toggle}
+          aria-label={isOpen ? "تصغير القائمة" : "توسيع القائمة"}
+          className={cn(
+            "flex w-full items-center gap-2 rounded-lg py-2 text-[var(--text-muted)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--text-primary)]",
+            isOpen ? "px-3" : "justify-center px-0"
+          )}
+        >
+          {isRtl
+            ? (isOpen
+                ? <ChevronRight className="h-4 w-4 shrink-0" />
+                : <ChevronLeft className="h-4 w-4 shrink-0" />)
+            : (isOpen
+                ? <ChevronLeft className="h-4 w-4 shrink-0" />
+                : <ChevronRight className="h-4 w-4 shrink-0" />)
+          }
+          {isOpen && <span className="text-xs">تصغير</span>}
+        </button>
+      </div>
     </aside>
   );
 }

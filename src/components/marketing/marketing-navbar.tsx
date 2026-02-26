@@ -4,6 +4,7 @@ import { Link } from "@/i18n/routing";
 import { useLocale } from "next-intl";
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
+import { BRAND } from "@/config/brand";
 
 export function MarketingNavbar() {
   const locale = useLocale();
@@ -41,13 +42,13 @@ export function MarketingNavbar() {
             className="flex h-7 w-7 items-center justify-center rounded-xl font-bold text-xs text-white"
             style={{ background: "var(--bs-signal)" }}
           >
-            س
+            {BRAND.iconLetter}
           </div>
           <span
             className="text-sm font-bold transition-colors duration-300"
             style={{ color: scrolled ? "var(--bs-steel)" : "#fff" }}
           >
-            سهيل
+            {BRAND.nameAr}
           </span>
         </Link>
 

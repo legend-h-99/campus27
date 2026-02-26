@@ -76,8 +76,32 @@
   --color-orange: #FB923C;
 
   /* ═══ Surface Colors ═══ */
-  --color-background: #F8FAFC;
-  --color-foreground: #4A4F5B;
+  --color-background: #F7F8FA;
+  --color-foreground: #0F172A;
+
+  /* ─── SaaS Clean Surfaces ─── */
+  --surface-0: #FFFFFF;
+  --surface-1: #F7F8FA;
+  --surface-2: #F0F1F4;
+  --surface-3: #E8E9EC;
+
+  /* ─── Borders ─── */
+  --border-default: #E2E8F0;
+  --border-subtle: #EEF0F3;
+  --border-strong: #CBD5E1;
+
+  /* ─── Text ─── */
+  --text-primary: #0F172A;
+  --text-secondary: #64748B;
+  --text-muted: #94A3B8;
+
+  /* ─── Primary surface for active states ─── */
+  --primary-surface: rgba(27, 169, 160, 0.08);
+  --primary-border-color: rgba(27, 169, 160, 0.20);
+
+  /* ─── Shadows (minimal) ─── */
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-popover: 0 4px 16px rgba(0, 0, 0, 0.10);
   --color-muted: #6B7280;
   --color-border: #E0E5F6;
   --color-card: #FFFFFF;
@@ -126,12 +150,8 @@
    Removed to prevent CSS Layers specificity conflict. */
 
 body {
-  background:
-    radial-gradient(circle at 20% 50%, rgba(27, 169, 160, 0.03) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(168, 213, 186, 0.03) 0%, transparent 50%),
-    linear-gradient(135deg, #F0FCFB 0%, #F0F3FA 35%, #F4FCFA 70%, #F8FAFC 100%);
-  background-attachment: fixed;
-  color: var(--color-foreground);
+  background: var(--surface-1);
+  color: var(--text-primary);
   font-family: var(--font-sans);
   min-height: 100vh;
   font-size: 14px;
@@ -190,35 +210,15 @@ body {
 }
 
 .glass-card {
-  background: linear-gradient(
-    135deg,
-    rgba(27, 169, 160, 0.06) 0%,
-    rgba(255, 255, 255, 0.90) 50%,
-    rgba(168, 213, 186, 0.04) 100%
-  );
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(27, 169, 160, 0.15);
-  border-top: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow:
-    0 8px 32px rgba(27, 169, 160, 0.06),
-    0 1px 0 rgba(255, 255, 255, 0.5) inset;
-  border-radius: 16px;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--surface-0);
+  border: 1px solid var(--border-default);
+  border-radius: 10px;
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 0.15s ease;
 }
 
 .glass-card:hover {
-  transform: translateY(-3px) scale(1.005);
-  box-shadow:
-    0 16px 48px rgba(27, 169, 160, 0.12),
-    0 1px 0 rgba(255, 255, 255, 0.7) inset;
-  background: linear-gradient(
-    135deg,
-    rgba(27, 169, 160, 0.10) 0%,
-    rgba(255, 255, 255, 0.95) 50%,
-    rgba(168, 213, 186, 0.06) 100%
-  );
-  border-color: rgba(27, 169, 160, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 /* Secondary Glass Card */
@@ -240,56 +240,30 @@ body {
 
 /* Stats Card with Teal accent */
 .stats-card {
-  background: linear-gradient(
-    135deg,
-    rgba(59, 172, 201, 0.05) 0%,
-    rgba(255, 255, 255, 0.92) 100%
-  );
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(27, 169, 160, 0.12);
-  border-radius: 14px;
-  overflow: hidden;
-  min-width: 0;
-  box-shadow:
-    0 8px 24px rgba(27, 169, 160, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--surface-0);
+  border: 1px solid var(--border-default);
+  border-radius: 10px;
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
 .stats-card:hover {
-  transform: translateY(-3px);
-  box-shadow:
-    0 12px 36px rgba(27, 169, 160, 0.14),
-    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: var(--border-strong);
 }
 
 /* ═══ Sidebar Container ═══ */
 .glass-sidebar {
-  background: linear-gradient(
-    180deg,
-    rgba(27, 169, 160, 0.06) 0%,
-    rgba(255, 255, 255, 0.95) 25%,
-    rgba(255, 255, 255, 0.92) 75%,
-    rgba(168, 213, 186, 0.04) 100%
-  );
-  backdrop-filter: blur(32px) saturate(150%);
-  -webkit-backdrop-filter: blur(32px) saturate(150%);
-  border-right: 1px solid rgba(27, 169, 160, 0.12);
-  box-shadow:
-    4px 0 24px rgba(27, 169, 160, 0.06),
-    inset -1px 0 0 rgba(255, 255, 255, 0.5);
+  background: var(--surface-0);
+  border-right: 1px solid var(--border-default);
   scroll-behavior: smooth;
   scrollbar-width: thin;
-  scrollbar-color: rgba(27, 169, 160, 0.3) transparent;
+  scrollbar-color: var(--border-strong) transparent;
 }
 
 [dir="rtl"] .glass-sidebar {
   border-right: none;
-  border-left: 1px solid rgba(27, 169, 160, 0.12);
-  box-shadow:
-    -4px 0 24px rgba(27, 169, 160, 0.06),
-    inset 1px 0 0 rgba(255, 255, 255, 0.5);
+  border-left: 1px solid var(--border-default);
 }
 
 /* ═══ Nav Items ═══ */
@@ -391,11 +365,8 @@ body {
 
 /* Header */
 .glass-header {
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
-  border-bottom: 1px solid rgba(27, 169, 160, 0.08);
-  box-shadow: 0 2px 16px rgba(27, 169, 160, 0.04);
+  background: var(--surface-0);
+  border-bottom: 1px solid var(--border-default);
 }
 
 /* Input */
@@ -1223,11 +1194,21 @@ button:not(:disabled):active {
   }
 }
 
-/* ═══ Cinematic Marketing Variables ═══ */
+/* ═══ Cinematic Marketing Variables — Brutalist Signal ═══ */
 :root {
+  /* Legacy */
   --c27-dark: #0F172A;
   --c27-accent-orange: #F97316;
   --font-drama: "Playfair Display", Georgia, serif;
+
+  /* Brutalist Signal palette */
+  --bs-steel:    #1C1C1E;
+  --bs-signal:   #FF3B30;
+  --bs-concrete: #F0EDE8;
+  --bs-chalk:    #E8E4DE;
+  --bs-muted:    #6E6B66;
+  --bs-mono:     "IBM Plex Mono", ui-monospace, monospace;
+  --bs-grotesk:  "Space Grotesk", "Inter", sans-serif;
 }
 
 /* ═══ Cinematic Keyframes ═══ */

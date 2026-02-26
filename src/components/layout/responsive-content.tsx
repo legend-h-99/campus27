@@ -17,16 +17,16 @@ export function ResponsiveContent({ children }: { children: React.ReactNode }) {
     // Sidebar is on the inline-start side (right in RTL, left in LTR)
     // So content needs padding-inline-start to avoid overlap
     if (mode === "collapsed") {
-      return isOpen ? "ps-[280px]" : "ps-20";
+      return isOpen ? "ps-[240px]" : "ps-16";
     }
     // Desktop: full sidebar
-    return isOpen ? "ps-[280px]" : "ps-20";
+    return isOpen ? "ps-[240px]" : "ps-16";
   };
 
   return (
     <main
       className={cn(
-        "min-h-screen pt-16 transition-all duration-300 ease-out md:pt-[72px]",
+        "min-h-screen pt-14 transition-all duration-300 ease-out",
         getContentPadding()
       )}
       role="main"

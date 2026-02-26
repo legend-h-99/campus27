@@ -1,6 +1,6 @@
 /**
  * AI System Configuration
- * إعدادات نظام الذكاء الاصطناعي - Campus27
+ * إعدادات نظام الذكاء الاصطناعي - Saohil
  */
 
 // ═══ Provider Configuration ═══

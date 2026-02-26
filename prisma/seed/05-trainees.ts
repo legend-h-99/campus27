@@ -109,7 +109,7 @@ export async function seedTrainees(
       const fullNameEn = `${firstNameEntry.en} ${familyEntry.en}`;
 
       const studentNumber = generateStudentNumber(idx + STUDENT_INDEX_OFFSET);
-      const email = `s${studentNumber}@stu.campus27.sa`;
+      const email = `s${studentNumber}@stu.saohil1.sa`;
       const nationalId = generateNationalId(isMale ? "male" : "female");
       const phone = generateSaudiPhone();
       const guardianPhone = generateSaudiPhone();
@@ -150,7 +150,7 @@ export async function seedTrainees(
   }
 
   // ---------- batch create: users first, then trainees ----------
-  const BATCH_SIZE = 50;
+  const BATCH_SIZE = 10;
   const createdTrainees: any[] = [];
 
   for (let start = 0; start < userCreateData.length; start += BATCH_SIZE) {

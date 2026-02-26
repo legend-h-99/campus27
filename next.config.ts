@@ -1,12 +1,18 @@
+import path from "path";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
-  // output: "standalone", // Enable only for Docker deployment
-  turbopack: {
-    root: process.cwd(),
+  output: "standalone",
+  serverExternalPackages: ["pg", "@prisma/adapter-pg", "@prisma/client"],
+  webpack: (config) => {
+    config.resolve.modules = [
+      path.resolve(process.cwd(), "node_modules"),
+      "node_modules",
+    ];
+    return config;
   },
   images: {
     remotePatterns: [
@@ -21,6 +27,10 @@ const nextConfig: NextConfig = {
       {
         protocol: "http",
         hostname: "localhost",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
       },
     ],
   },

@@ -19,6 +19,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 import { Link } from "@/i18n/routing";
+import { BRAND } from "@/config/brand";
 
 interface DemoUser {
   email: string;
@@ -33,7 +34,7 @@ interface DemoUser {
 
 const demoUsers: DemoUser[] = [
   {
-    email: "admin@campus27.sa",
+    email: "admin@saohil1.sa",
     password: "123456",
     role: "super_admin",
     roleAr: "مدير النظام",
@@ -43,7 +44,7 @@ const demoUsers: DemoUser[] = [
     color: "bg-red-500",
   },
   {
-    email: "dean@campus27.sa",
+    email: "dean@saohil1.sa",
     password: "123456",
     role: "dean",
     roleAr: "العميد",
@@ -53,7 +54,7 @@ const demoUsers: DemoUser[] = [
     color: "bg-teal-600",
   },
   {
-    email: "vp.trainers@campus27.sa",
+    email: "vp.trainers@saohil1.sa",
     password: "123456",
     role: "vp_trainers",
     roleAr: "وكيل التدريب",
@@ -63,7 +64,7 @@ const demoUsers: DemoUser[] = [
     color: "bg-blue-600",
   },
   {
-    email: "vp.trainees@campus27.sa",
+    email: "vp.trainees@saohil1.sa",
     password: "123456",
     role: "vp_trainees",
     roleAr: "وكيل المتدربين",
@@ -73,7 +74,7 @@ const demoUsers: DemoUser[] = [
     color: "bg-green-600",
   },
   {
-    email: "vp.quality@campus27.sa",
+    email: "vp.quality@saohil1.sa",
     password: "123456",
     role: "vp_quality",
     roleAr: "وكيل الجودة",
@@ -83,7 +84,7 @@ const demoUsers: DemoUser[] = [
     color: "bg-purple-600",
   },
   {
-    email: "head.cs@campus27.sa",
+    email: "head.cs@saohil1.sa",
     password: "123456",
     role: "dept_head",
     roleAr: "رئيس قسم حاسب",
@@ -93,7 +94,7 @@ const demoUsers: DemoUser[] = [
     color: "bg-orange-500",
   },
   {
-    email: "head.ee@campus27.sa",
+    email: "head.ee@saohil1.sa",
     password: "123456",
     role: "dept_head",
     roleAr: "رئيس قسم كهرباء",
@@ -103,7 +104,7 @@ const demoUsers: DemoUser[] = [
     color: "bg-orange-500",
   },
   {
-    email: "trainer.abdulaziz.almarri@campus27.sa",
+    email: "trainer.abdulaziz.almarri@saohil1.sa",
     password: "123456",
     role: "trainer",
     roleAr: "مدرب",
@@ -113,7 +114,7 @@ const demoUsers: DemoUser[] = [
     color: "bg-teal-500",
   },
   {
-    email: "trainer.abdullah.almarri@campus27.sa",
+    email: "trainer.abdullah.almarri@saohil1.sa",
     password: "123456",
     role: "trainer",
     roleAr: "مدرب",
@@ -123,7 +124,7 @@ const demoUsers: DemoUser[] = [
     color: "bg-teal-500",
   },
   {
-    email: "s241001@stu.campus27.sa",
+    email: "s241001@stu.saohil1.sa",
     password: "123456",
     role: "trainee",
     roleAr: "متدرب",
@@ -133,7 +134,7 @@ const demoUsers: DemoUser[] = [
     color: "bg-cyan-500",
   },
   {
-    email: "accountant@campus27.sa",
+    email: "accountant@saohil1.sa",
     password: "123456",
     role: "accountant",
     roleAr: "محاسب",
@@ -143,7 +144,7 @@ const demoUsers: DemoUser[] = [
     color: "bg-amber-600",
   },
   {
-    email: "quality@campus27.sa",
+    email: "quality@saohil1.sa",
     password: "123456",
     role: "quality_officer",
     roleAr: "مسؤول جودة",
@@ -230,7 +231,7 @@ export default function LoginPage() {
               <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-teal-600/10 xs:mb-4 xs:h-16 xs:w-16">
                 <GraduationCap className="h-7 w-7 text-teal-600 xs:h-8 xs:w-8" />
               </div>
-              <h1 className="text-xl font-bold text-teal-600 xs:text-2xl">Campus27</h1>
+              <h1 className="text-xl font-bold text-teal-600 xs:text-2xl">{BRAND.name(locale)}</h1>
               <p className="mt-1.5 text-xs text-muted xs:mt-2 xs:text-sm">{t("loginSubtitle")}</p>
             </div>
 
@@ -256,7 +257,7 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none transition-colors focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 xs:px-4 xs:py-3"
-                  placeholder="admin@campus27.sa"
+                  placeholder="admin@saohil1.sa"
                   dir="ltr"
                 />
               </div>

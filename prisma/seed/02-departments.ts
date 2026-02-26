@@ -24,7 +24,7 @@ const DEPARTMENTS: DepartmentDef[] = [
     descriptionEn: "Computer Science and IT Department",
     capacity: 300,
     head: {
-      email: "head.cs@campus27.sa",
+      email: "head.cs@saohil1.sa",
       nameAr: "د. خالد بن سعيد الشمراني",
       nameEn: "Dr. Khaled Al-Shamrani",
       phone: "0511001001",
@@ -38,7 +38,7 @@ const DEPARTMENTS: DepartmentDef[] = [
     descriptionEn: "Electrical Engineering Department",
     capacity: 250,
     head: {
-      email: "head.ee@campus27.sa",
+      email: "head.ee@saohil1.sa",
       nameAr: "م. فهد بن ناصر الدوسري",
       nameEn: "Eng. Fahad Al-Dosari",
       phone: "0511002002",
@@ -52,7 +52,7 @@ const DEPARTMENTS: DepartmentDef[] = [
     descriptionEn: "Mechanical Engineering Department",
     capacity: 260,
     head: {
-      email: "head.me@campus27.sa",
+      email: "head.me@saohil1.sa",
       nameAr: "م. عبدالعزيز بن صالح القحطاني",
       nameEn: "Eng. Abdulaziz Al-Qahtani",
       phone: "0511003003",
@@ -66,7 +66,7 @@ const DEPARTMENTS: DepartmentDef[] = [
     descriptionEn: "Business Administration Department",
     capacity: 200,
     head: {
-      email: "head.ba@campus27.sa",
+      email: "head.ba@saohil1.sa",
       nameAr: "د. سارة بنت عبدالله المطيري",
       nameEn: "Dr. Sara Al-Mutairi",
       phone: "0511004004",
@@ -80,7 +80,7 @@ const DEPARTMENTS: DepartmentDef[] = [
     descriptionEn: "Electronic Marketing Department",
     capacity: 150,
     head: {
-      email: "head.em@campus27.sa",
+      email: "head.em@saohil1.sa",
       nameAr: "أ. محمد بن علي الشهري",
       nameEn: "Mr. Mohammed Al-Shahri",
       phone: "0511005005",
@@ -94,7 +94,7 @@ const DEPARTMENTS: DepartmentDef[] = [
     descriptionEn: "Programming and Web Development Department",
     capacity: 180,
     head: {
-      email: "head.wd@campus27.sa",
+      email: "head.wd@saohil1.sa",
       nameAr: "م. نورة بنت فهد العتيبي",
       nameEn: "Eng. Noura Al-Otaibi",
       phone: "0511006006",
@@ -108,7 +108,7 @@ const DEPARTMENTS: DepartmentDef[] = [
     descriptionEn: "Networks and Cybersecurity Department",
     capacity: 120,
     head: {
-      email: "head.cy@campus27.sa",
+      email: "head.cy@saohil1.sa",
       nameAr: "م. عمر بن سعد الزهراني",
       nameEn: "Eng. Omar Al-Zahrani",
       phone: "0511007007",
@@ -122,7 +122,7 @@ const DEPARTMENTS: DepartmentDef[] = [
     descriptionEn: "Graphic Design and Multimedia Department",
     capacity: 100,
     head: {
-      email: "head.gd@campus27.sa",
+      email: "head.gd@saohil1.sa",
       nameAr: "أ. لينا بنت خالد الحربي",
       nameEn: "Ms. Lina Al-Harbi",
       phone: "0511008008",
@@ -136,7 +136,7 @@ const DEPARTMENTS: DepartmentDef[] = [
     descriptionEn: "Accounting and Financial Sciences Department",
     capacity: 140,
     head: {
-      email: "head.ac@campus27.sa",
+      email: "head.ac@saohil1.sa",
       nameAr: "د. عبدالرحمن بن حسن العمري",
       nameEn: "Dr. Abdulrahman Al-Omari",
       phone: "0511009009",
@@ -150,7 +150,7 @@ const DEPARTMENTS: DepartmentDef[] = [
     descriptionEn: "Occupational Safety and Health Department",
     capacity: 100,
     head: {
-      email: "head.os@campus27.sa",
+      email: "head.os@saohil1.sa",
       nameAr: "م. تركي بن سليمان البقمي",
       nameEn: "Eng. Turki Al-Bugami",
       phone: "0511010010",

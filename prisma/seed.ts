@@ -31,7 +31,13 @@ import { seedQualityAdvanced } from "./seed/15-quality-advanced";
 // Database connection (Prisma 7 adapter pattern)
 // ──────────────────────────────────────────────────
 
-const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new pg.Pool({
+  connectionString: process.env.DATABASE_URL,
+  max: 3,
+  idleTimeoutMillis: 120000,
+  keepAlive: true,
+  keepAliveInitialDelayMillis: 10000,
+});
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter }) as unknown as PrismaClient;
 

@@ -41,7 +41,7 @@ const mockTrainees: Trainee[] = [
     gpa: 4.52,
     status: "active",
     enrollmentDate: "2022-09-01",
-    email: "m.alomari@stu.campus27.edu.sa",
+    email: "m.alomari@stu.saohil1.edu.sa",
   },
   {
     id: "2",
@@ -52,7 +52,7 @@ const mockTrainees: Trainee[] = [
     gpa: 3.85,
     status: "active",
     enrollmentDate: "2022-09-01",
-    email: "a.alqarni@stu.campus27.edu.sa",
+    email: "a.alqarni@stu.saohil1.edu.sa",
   },
   {
     id: "3",
@@ -63,7 +63,7 @@ const mockTrainees: Trainee[] = [
     gpa: 4.10,
     status: "active",
     enrollmentDate: "2021-09-01",
-    email: "f.almalki@stu.campus27.edu.sa",
+    email: "f.almalki@stu.saohil1.edu.sa",
   },
   {
     id: "4",
@@ -74,7 +74,7 @@ const mockTrainees: Trainee[] = [
     gpa: 2.95,
     status: "active",
     enrollmentDate: "2023-09-01",
-    email: "s.alharbi@stu.campus27.edu.sa",
+    email: "s.alharbi@stu.saohil1.edu.sa",
   },
   {
     id: "5",
@@ -85,7 +85,7 @@ const mockTrainees: Trainee[] = [
     gpa: 4.75,
     status: "graduated",
     enrollmentDate: "2021-09-01",
-    email: "o.alshammari@stu.campus27.edu.sa",
+    email: "o.alshammari@stu.saohil1.edu.sa",
   },
   {
     id: "6",
@@ -96,7 +96,7 @@ const mockTrainees: Trainee[] = [
     gpa: 1.85,
     status: "suspended",
     enrollmentDate: "2022-09-01",
-    email: "y.alrashidi@stu.campus27.edu.sa",
+    email: "y.alrashidi@stu.saohil1.edu.sa",
   },
   {
     id: "7",
@@ -107,7 +107,7 @@ const mockTrainees: Trainee[] = [
     gpa: 3.60,
     status: "active",
     enrollmentDate: "2022-09-01",
-    email: "n.almutairi@stu.campus27.edu.sa",
+    email: "n.almutairi@stu.saohil1.edu.sa",
   },
   {
     id: "8",
@@ -118,7 +118,7 @@ const mockTrainees: Trainee[] = [
     gpa: 3.25,
     status: "active",
     enrollmentDate: "2023-09-01",
-    email: "m.alanazi@stu.campus27.edu.sa",
+    email: "m.alanazi@stu.saohil1.edu.sa",
   },
   {
     id: "9",
@@ -129,7 +129,7 @@ const mockTrainees: Trainee[] = [
     gpa: 3.90,
     status: "active",
     enrollmentDate: "2021-09-01",
-    email: "b.aljuhani@stu.campus27.edu.sa",
+    email: "b.aljuhani@stu.saohil1.edu.sa",
   },
   {
     id: "10",
@@ -140,7 +140,7 @@ const mockTrainees: Trainee[] = [
     gpa: 0,
     status: "withdrawn",
     enrollmentDate: "2023-09-01",
-    email: "k.alsubaie@stu.campus27.edu.sa",
+    email: "k.alsubaie@stu.saohil1.edu.sa",
   },
   {
     id: "11",
@@ -151,7 +151,7 @@ const mockTrainees: Trainee[] = [
     gpa: 4.30,
     status: "active",
     enrollmentDate: "2022-09-01",
-    email: "s.aldossari@stu.campus27.edu.sa",
+    email: "s.aldossari@stu.saohil1.edu.sa",
   },
   {
     id: "12",
@@ -162,7 +162,7 @@ const mockTrainees: Trainee[] = [
     gpa: 3.45,
     status: "active",
     enrollmentDate: "2022-09-01",
-    email: "a.alghamdi@stu.campus27.edu.sa",
+    email: "a.alghamdi@stu.saohil1.edu.sa",
   },
 ];
 

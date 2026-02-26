@@ -19,6 +19,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 import { Link } from "@/i18n/routing";
+import { BRAND } from "@/config/brand";
 
 interface DemoUser {
   email: string;
@@ -230,7 +231,7 @@ export default function LoginPage() {
               <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-teal-600/10 xs:mb-4 xs:h-16 xs:w-16">
                 <GraduationCap className="h-7 w-7 text-teal-600 xs:h-8 xs:w-8" />
               </div>
-              <h1 className="text-xl font-bold text-teal-600 xs:text-2xl">Saohil1</h1>
+              <h1 className="text-xl font-bold text-teal-600 xs:text-2xl">{BRAND.name(locale)}</h1>
               <p className="mt-1.5 text-xs text-muted xs:mt-2 xs:text-sm">{t("loginSubtitle")}</p>
             </div>
 

@@ -10,34 +10,40 @@ export function PricingSection({ locale }: PricingSectionProps) {
 
   const tiers = [
     {
-      name: isAr ? "أساسي" : "Essential",
-      price: isAr ? "مجاني" : "Free",
-      sub: isAr ? "للبدء الفوري" : "To get started",
+      name: isAr ? "المبتدئ" : "Starter",
+      price: isAr ? "1,200" : "1,200",
+      currency: isAr ? "ر.س/شهر" : "SAR/mo",
+      sub: isAr ? "للمعاهد الصغيرة" : "For small institutes",
+      limit: isAr ? "حتى 500 متدرب" : "Up to 500 trainees",
       features: isAr
-        ? ["حتى 25 متدرب", "جدولة أساسية", "تقارير أسبوعية", "دعم عبر البريد"]
-        : ["Up to 25 trainees", "Basic scheduling", "Weekly reports", "Email support"],
+        ? ["إدارة المتدربين والمدربين", "الجداول الأساسية", "التقارير الأساسية", "دعم بالبريد الإلكتروني"]
+        : ["Trainees & trainers management", "Basic scheduling", "Basic reports", "Email support"],
       cta: isAr ? "ابدأ مجانًا" : "Start Free",
-      href: "/contact",
+      href: "/pricing",
       highlighted: false,
     },
     {
-      name: isAr ? "متقدم" : "Performance",
-      price: isAr ? "199 ر.س" : "$55",
-      sub: isAr ? "شهريًا / لكل فريق" : "per month / team",
+      name: isAr ? "الاحترافي" : "Professional",
+      price: isAr ? "3,500" : "3,500",
+      currency: isAr ? "ر.س/شهر" : "SAR/mo",
+      sub: isAr ? "للكليات المتوسطة" : "For mid-size colleges",
+      limit: isAr ? "حتى 5,000 متدرب" : "Up to 5,000 trainees",
       features: isAr
-        ? ["متدربون غير محدودين", "تتبع الأداء لحظيًا", "تقارير احترافية", "جدولة ذكية بـ AI", "تكاملات مرنة", "أولوية الدعم"]
-        : ["Unlimited trainees", "Real-time performance", "Professional reports", "AI smart scheduling", "Flexible integrations", "Priority support"],
+        ? ["كل ميزات المبتدئ", "الذكاء الاصطناعي", "إدارة الجودة والاعتماد", "الإدارة المالية الكاملة", "دعم ذو أولوية"]
+        : ["All Starter features", "AI insights", "Quality & accreditation", "Full finance management", "Priority support"],
       cta: isAr ? "ابدأ التجربة" : "Start Trial",
-      href: "/contact",
+      href: "/pricing",
       highlighted: true,
     },
     {
-      name: isAr ? "مؤسسي" : "Enterprise",
+      name: isAr ? "المؤسسي" : "Enterprise",
       price: isAr ? "تواصل معنا" : "Contact Us",
-      sub: isAr ? "لفرق 100+" : "for 100+ teams",
+      currency: "",
+      sub: isAr ? "للجامعات والمجموعات" : "For universities & groups",
+      limit: isAr ? "متدربون غير محدودين" : "Unlimited trainees",
       features: isAr
-        ? ["كل ميزات متقدم", "SSO وأمان متقدم", "SLA مضمون 99.9%", "مدير حساب مخصص", "تدريب مخصص", "API كامل"]
-        : ["Everything in Performance", "SSO & advanced security", "99.9% SLA guarantee", "Dedicated account manager", "Custom training", "Full API access"],
+        ? ["كل ميزات الاحترافي", "API مخصص", "تكامل الأنظمة الخارجية", "مدير حساب مخصص", "SLA مضمون 99.9%"]
+        : ["All Professional features", "Custom API access", "External system integration", "Dedicated account manager", "99.9% SLA guarantee"],
       cta: isAr ? "تواصل مع المبيعات" : "Talk to Sales",
       href: "/contact",
       highlighted: false,
@@ -71,6 +77,7 @@ export function PricingSection({ locale }: PricingSectionProps) {
         {/* Cards */}
         <div className="grid gap-6 md:grid-cols-3">
           {tiers.map((tier) => (
+
             <div
               key={tier.name}
               className="relative flex flex-col rounded-3xl p-8 transition-all duration-300"
@@ -111,20 +118,40 @@ export function PricingSection({ locale }: PricingSectionProps) {
               </p>
 
               {/* Price */}
+              <div className="mt-4 flex items-baseline gap-1">
+                <p
+                  className="text-4xl font-extrabold"
+                  style={{
+                    color: tier.highlighted ? "#fff" : "var(--bs-steel)",
+                    fontFamily: "var(--bs-grotesk)",
+                  }}
+                >
+                  {tier.price}
+                </p>
+                {tier.currency && (
+                  <span
+                    className="text-sm font-medium"
+                    style={{ color: tier.highlighted ? "rgba(255,255,255,0.5)" : "var(--bs-muted)" }}
+                  >
+                    {tier.currency}
+                  </span>
+                )}
+              </div>
               <p
-                className="mt-4 text-4xl font-extrabold"
-                style={{
-                  color: tier.highlighted ? "#fff" : "var(--bs-steel)",
-                  fontFamily: "var(--bs-grotesk)",
-                }}
-              >
-                {tier.price}
-              </p>
-              <p
-                className="text-sm"
+                className="mt-0.5 text-sm"
                 style={{ color: tier.highlighted ? "rgba(255,255,255,0.45)" : "var(--bs-muted)" }}
               >
                 {tier.sub}
+              </p>
+              {/* Student limit badge */}
+              <p
+                className="mt-2 text-xs font-semibold"
+                style={{
+                  color: tier.highlighted ? "var(--bs-signal)" : "var(--bs-signal)",
+                  fontFamily: "var(--bs-mono)",
+                }}
+              >
+                {tier.limit}
               </p>
 
               {/* Divider */}
@@ -168,6 +195,17 @@ export function PricingSection({ locale }: PricingSectionProps) {
               </Link>
             </div>
           ))}
+        </div>
+
+        {/* View all plans link */}
+        <div className="mt-10 text-center">
+          <Link
+            href="/pricing"
+            className="inline-flex items-center gap-2 text-sm font-medium transition-colors duration-200"
+            style={{ color: "var(--bs-muted)", fontFamily: "var(--bs-mono)" }}
+          >
+            {isAr ? "// عرض كل تفاصيل الخطط ←" : "// View full plan details →"}
+          </Link>
         </div>
       </div>
     </section>

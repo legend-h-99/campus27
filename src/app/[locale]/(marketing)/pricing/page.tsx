@@ -18,7 +18,7 @@ export default async function PricingPage({
       price: "1,200",
       currency: isAr ? "ر.س/شهر" : "SAR/mo",
       description: isAr ? "للمعاهد الصغيرة" : "For small institutes",
-      limit: isAr ? "حتى 500 طالب" : "Up to 500 students",
+      limit: isAr ? "حتى 500 متدرب" : "Up to 500 trainees",
       highlight: false,
       features: [
         isAr ? "إدارة الطلاب والمدربين" : "Students & trainers management",
@@ -33,7 +33,7 @@ export default async function PricingPage({
       price: "3,500",
       currency: isAr ? "ر.س/شهر" : "SAR/mo",
       description: isAr ? "للكليات المتوسطة" : "For mid-size colleges",
-      limit: isAr ? "حتى 5,000 طالب" : "Up to 5,000 students",
+      limit: isAr ? "حتى 5,000 متدرب" : "Up to 5,000 trainees",
       highlight: true,
       features: [
         isAr ? "كل ميزات المبتدئ" : "All Starter features",
@@ -49,7 +49,7 @@ export default async function PricingPage({
       price: isAr ? "تواصل معنا" : "Contact Us",
       currency: "",
       description: isAr ? "للجامعات والمجموعات" : "For universities & groups",
-      limit: isAr ? "طلاب غير محدودين" : "Unlimited students",
+      limit: isAr ? "متدربون غير محدودين" : "Unlimited trainees",
       highlight: false,
       features: [
         isAr ? "كل ميزات الاحترافي" : "All Professional features",

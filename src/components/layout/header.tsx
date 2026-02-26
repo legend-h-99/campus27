@@ -15,9 +15,11 @@ import {
   ChevronDown,
   GraduationCap,
   ArrowRightLeft,
+  Search,
 } from "lucide-react";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { UserSwitcher } from "@/components/layout/user-switcher";
+import { useCommandPaletteStore } from "@/stores/command-palette-store";
 
 interface HeaderProps {
   user: {
@@ -33,6 +35,7 @@ export function Header({ user }: HeaderProps) {
   const t = useTranslations();
   const locale = useLocale();
   const { isOpen, mode, toggle, openMobile } = useSidebarStore();
+  const { open: openPalette } = useCommandPaletteStore();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showUserSwitcher, setShowUserSwitcher] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -62,26 +65,30 @@ export function Header({ user }: HeaderProps) {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 
-  // Calculate header positioning based on sidebar mode
-  const getHeaderPosition = () => {
-    if (mode === "hidden") {
-      return "inset-x-0";
-    }
-    if (mode === "collapsed") {
-      return isRtl
-        ? isOpen ? "left-0 right-[280px]" : "left-0 right-20"
-        : isOpen ? "left-[280px] right-0" : "left-20 right-0";
-    }
-    return isRtl
-      ? isOpen ? "left-0 right-[280px]" : "left-0 right-20"
-      : isOpen ? "left-[280px] right-0" : "left-20 right-0";
-  };
+  // Open Command Palette on ⌘K / Ctrl+K
+  useEffect(() => {
+    const handleGlobalKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        openPalette();
+      }
+    };
+    document.addEventListener("keydown", handleGlobalKey);
+    return () => document.removeEventListener("keydown", handleGlobalKey);
+  }, [openPalette]);
+
+  // Sidebar offset for desktop header positioning
+  const sidebarExpanded = mode === "hidden" ? false : isOpen;
 
   return (
     <header
       className={cn(
-        "glass-header fixed top-0 z-30 flex h-16 items-center justify-between px-4 transition-all duration-300 md:h-[72px] md:px-6",
-        getHeaderPosition()
+        "glass-header fixed top-0 z-30 flex h-14 items-center justify-between px-4 transition-all duration-300",
+        mode === "hidden"
+          ? "inset-x-0"
+          : isRtl
+            ? (sidebarExpanded ? "left-0 right-[240px]" : "left-0 right-16")
+            : (sidebarExpanded ? "right-0 left-[240px]" : "right-0 left-16"),
       )}
     >
       {/* Left side */}
@@ -101,7 +108,7 @@ export function Header({ user }: HeaderProps) {
         {mode === "hidden" && (
           <Link href="/" className="flex items-center gap-1.5 md:hidden">
             <GraduationCap className="h-6 w-6 text-teal-600" />
-            <span className="text-sm font-bold text-teal-600">Campus27</span>
+            <span className="text-sm font-bold text-teal-600">Saohil1</span>
           </Link>
         )}
 
@@ -123,6 +130,17 @@ export function Header({ user }: HeaderProps) {
           <Globe className="h-4 w-4" />
           <span className="hidden xs:inline">{locale === "ar" ? "EN" : "ع"}</span>
         </Link>
+
+        {/* Global Search Button */}
+        <button
+          onClick={openPalette}
+          className="hidden items-center gap-2 rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-1.5 text-[12px] text-slate-400 transition-all duration-200 hover:border-teal-300 hover:bg-teal-50 hover:text-teal-600 sm:flex"
+          aria-label={locale === "ar" ? "بحث شامل" : "Global search"}
+        >
+          <Search className="h-3.5 w-3.5" />
+          <span>{locale === "ar" ? "ابحث..." : "Search..."}</span>
+          <span className="kbd-badge">⌘K</span>
+        </button>
 
         {/* Notifications */}
         <Link

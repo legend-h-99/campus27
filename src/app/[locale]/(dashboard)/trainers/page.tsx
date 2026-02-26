@@ -36,7 +36,7 @@ const mockTrainers: Trainer[] = [
   {
     id: "TR-001",
     name: "د. خالد بن محمد السعيد",
-    email: "k.alsaeed@campus27.edu.sa",
+    email: "k.alsaeed@saohil1.edu.sa",
     phone: "0501234567",
     department: "الحاسب الآلي",
     specialization: "هندسة البرمجيات",
@@ -48,7 +48,7 @@ const mockTrainers: Trainer[] = [
   {
     id: "TR-002",
     name: "م. فهد بن عبدالله الدوسري",
-    email: "f.aldossari@campus27.edu.sa",
+    email: "f.aldossari@saohil1.edu.sa",
     phone: "0559876543",
     department: "الكهرباء",
     specialization: "أنظمة التحكم الآلي",
@@ -60,7 +60,7 @@ const mockTrainers: Trainer[] = [
   {
     id: "TR-003",
     name: "د. أحمد بن سعد الغامدي",
-    email: "a.alghamdi@campus27.edu.sa",
+    email: "a.alghamdi@saohil1.edu.sa",
     phone: "0567891234",
     department: "الميكانيكا",
     specialization: "التصميم الميكانيكي",
@@ -72,7 +72,7 @@ const mockTrainers: Trainer[] = [
   {
     id: "TR-004",
     name: "م. سلطان بن فيصل القحطاني",
-    email: "s.alqahtani@campus27.edu.sa",
+    email: "s.alqahtani@saohil1.edu.sa",
     phone: "0543216789",
     department: "الإلكترونيات",
     specialization: "الدوائر الرقمية",
@@ -84,7 +84,7 @@ const mockTrainers: Trainer[] = [
   {
     id: "TR-005",
     name: "د. عبدالرحمن بن ناصر الشهري",
-    email: "a.alshehri@campus27.edu.sa",
+    email: "a.alshehri@saohil1.edu.sa",
     phone: "0512345678",
     department: "الحاسب الآلي",
     specialization: "قواعد البيانات",
@@ -96,7 +96,7 @@ const mockTrainers: Trainer[] = [
   {
     id: "TR-006",
     name: "م. تركي بن سعود العتيبي",
-    email: "t.alotaibi@campus27.edu.sa",
+    email: "t.alotaibi@saohil1.edu.sa",
     phone: "0578901234",
     department: "الإدارة المكتبية",
     specialization: "إدارة الأعمال",
@@ -108,7 +108,7 @@ const mockTrainers: Trainer[] = [
   {
     id: "TR-007",
     name: "د. محمد بن علي الزهراني",
-    email: "m.alzahrani@campus27.edu.sa",
+    email: "m.alzahrani@saohil1.edu.sa",
     phone: "0534567890",
     department: "الكهرباء",
     specialization: "القوى الكهربائية",
@@ -120,7 +120,7 @@ const mockTrainers: Trainer[] = [
   {
     id: "TR-008",
     name: "م. يوسف بن خالد المطيري",
-    email: "y.almutairi@campus27.edu.sa",
+    email: "y.almutairi@saohil1.edu.sa",
     phone: "0556789012",
     department: "اللحام والتشكيل",
     specialization: "اللحام الصناعي",
@@ -132,7 +132,7 @@ const mockTrainers: Trainer[] = [
   {
     id: "TR-009",
     name: "د. سعد بن عمر الحربي",
-    email: "s.alharbi@campus27.edu.sa",
+    email: "s.alharbi@saohil1.edu.sa",
     phone: "0523456789",
     department: "الميكانيكا",
     specialization: "ميكانيكا المركبات",
@@ -144,7 +144,7 @@ const mockTrainers: Trainer[] = [
   {
     id: "TR-010",
     name: "م. بدر بن حمد الراشد",
-    email: "b.alrashid@campus27.edu.sa",
+    email: "b.alrashid@saohil1.edu.sa",
     phone: "0545678901",
     department: "الحاسب الآلي",
     specialization: "الشبكات وأمن المعلومات",

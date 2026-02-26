@@ -34,7 +34,7 @@ export function StatCard({
     return (
       <div
         className={cn(
-          "stats-card group p-4 md:p-6",
+          "stats-card group p-5",
           className
         )}
       >
@@ -47,8 +47,8 @@ export function StatCard({
                 <span className={cn(
                   "inline-flex shrink-0 items-center gap-0.5 rounded-full px-2 py-0.5 text-[11px] font-semibold transition-all duration-300",
                   trend.isPositive
-                    ? "bg-teal-100 text-teal-700"
-                    : "bg-red-100 text-danger"
+                    ? "bg-emerald-50 text-emerald-700"
+                    : "bg-red-50 text-red-600"
                 )}>
                   {trend.isPositive ? "↑" : "↓"} {trend.value}%
                 </span>
@@ -57,7 +57,7 @@ export function StatCard({
             )}
           </div>
           <div className={cn(
-            "rounded-2xl p-3 transition-all duration-300 group-hover:scale-110 group-hover:shadow-md md:p-3.5",
+            "rounded-xl p-2.5 transition-transform duration-150 group-hover:scale-105",
             iconColor
           )}>
             <Icon className="h-6 w-6 md:h-7 md:w-7" />

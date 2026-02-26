@@ -1,5 +1,6 @@
 import { FadeInSection } from "@/components/ui/fade-in-section";
 import { FeaturesGrid } from "@/components/marketing/features-grid";
+import { BRAND } from "@/config/brand";
 
 export default async function FeaturesPage({
   params,
@@ -14,7 +15,7 @@ export default async function FeaturesPage({
       <div className="mx-auto max-w-7xl px-6">
         <FadeInSection className="mb-4 text-center">
           <h1 className="text-4xl font-bold text-slate-900 md:text-5xl">
-            {isAr ? "ميزات منصة Saohil1" : "Saohil1 Platform Features"}
+            {isAr ? `ميزات منصة ${BRAND.nameAr}` : `${BRAND.nameEn} Platform Features`}
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-500">
             {isAr

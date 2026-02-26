@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { UserSwitcher } from "@/components/layout/user-switcher";
+import { BRAND } from "@/config/brand";
 import { useCommandPaletteStore } from "@/stores/command-palette-store";
 
 interface HeaderProps {
@@ -108,7 +109,7 @@ export function Header({ user }: HeaderProps) {
         {mode === "hidden" && (
           <Link href="/" className="flex items-center gap-1.5 md:hidden">
             <GraduationCap className="h-6 w-6 text-teal-600" />
-            <span className="text-sm font-bold text-teal-600">Saohil1</span>
+            <span className="text-sm font-bold text-teal-600">{BRAND.nameEn}</span>
           </Link>
         )}
 

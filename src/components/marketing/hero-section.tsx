@@ -5,9 +5,9 @@ interface HeroSectionProps {
   locale: string;
 }
 
-// Unsplash: modern academic institution, architectural, cinematic
+// Unsplash: high-end training facility, control room, team performance
 const BG_IMAGE =
-  "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1920&q=80";
+  "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=1920&q=80";
 
 export function HeroSection({ locale }: HeroSectionProps) {
   const isAr = locale === "ar";
@@ -18,33 +18,56 @@ export function HeroSection({ locale }: HeroSectionProps) {
       style={{
         backgroundImage: `url(${BG_IMAGE})`,
         backgroundSize: "cover",
-        backgroundPosition: "center",
+        backgroundPosition: "center 30%",
       }}
     >
-      {/* Dark gradient overlay */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0F172A]/95 via-[#0F172A]/55 to-transparent" />
+      {/* Deep gradient: Steel from bottom */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(to top, rgba(28,28,30,0.97) 0%, rgba(28,28,30,0.55) 40%, rgba(28,28,30,0.10) 100%)",
+        }}
+      />
 
-      {/* Noise overlay */}
+      {/* SVG noise overlay */}
       <svg
-        className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.035]"
+        className="pointer-events-none absolute inset-0 h-full w-full"
+        style={{ opacity: 0.035 }}
         xmlns="http://www.w3.org/2000/svg"
       >
-        <filter id="hero-noise">
+        <filter id="hero-noise-bs">
           <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" />
           <feColorMatrix type="saturate" values="0" />
         </filter>
-        <rect width="100%" height="100%" filter="url(#hero-noise)" />
+        <rect width="100%" height="100%" filter="url(#hero-noise-bs)" />
       </svg>
 
+      {/* Accent bar — top edge */}
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-[3px]"
+        style={{ background: "var(--bs-signal)" }}
+      />
+
       {/* Content — bottom-start */}
-      <div className="relative z-10 max-w-2xl">
-        {/* Badge */}
+      <div className="relative z-10 max-w-3xl" style={{ fontFamily: "var(--bs-grotesk)" }}>
+
+        {/* System badge */}
         <div
-          className="mb-6 inline-flex items-center gap-2 rounded-full border border-teal-400/30 bg-teal-500/10 px-4 py-1.5 text-sm font-medium text-teal-300"
-          style={{ animation: "fade-in-up 0.5s cubic-bezier(0.16,1,0.3,1) 0.1s both" }}
+          className="mb-6 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-medium"
+          style={{
+            borderColor: "rgba(255,59,48,0.35)",
+            background: "rgba(255,59,48,0.08)",
+            color: "rgba(255,255,255,0.7)",
+            fontFamily: "var(--bs-mono)",
+            animation: "fade-in-up 0.5s cubic-bezier(0.16,1,0.3,1) 0.1s both",
+          }}
         >
-          <span className="h-1.5 w-1.5 rounded-full bg-teal-400 animate-pulse" />
-          {isAr ? "منصة معتمدة للكليات التقنية" : "Certified Platform for Technical Colleges"}
+          <span
+            className="h-1.5 w-1.5 rounded-full animate-pulse"
+            style={{ background: "var(--bs-signal)" }}
+          />
+          {isAr ? "نظام إدارة الكليات التقنية — الإصدار 2.0" : "Technical College Management System — v2.0"}
         </div>
 
         {/* Dramatic headline */}
@@ -52,25 +75,37 @@ export function HeroSection({ locale }: HeroSectionProps) {
           className="mb-6 text-white"
           style={{ animation: "fade-in-up 0.6s cubic-bezier(0.16,1,0.3,1) 0.2s both" }}
         >
-          <span className="block text-5xl font-bold leading-tight lg:text-7xl">
+          <span
+            className="block font-extrabold leading-[1.05] tracking-tight"
+            style={{ fontSize: "clamp(2.8rem, 7vw, 5.5rem)" }}
+          >
             {isAr ? "إدارة الكلية" : "College Management"}
           </span>
           <span
-            className="block text-5xl leading-tight text-teal-400 lg:text-7xl"
-            style={{ fontFamily: "var(--font-drama)", fontStyle: "italic", fontWeight: 800 }}
+            className="block leading-[1.05]"
+            style={{
+              fontSize: "clamp(2.8rem, 7vw, 5.5rem)",
+              color: "var(--bs-signal)",
+              fontFamily: "var(--font-drama)",
+              fontStyle: "italic",
+              fontWeight: 800,
+            }}
           >
-            {isAr ? "بـ ذكاء." : "with Intelligence."}
+            {isAr ? "باحترافية تامة." : "Done Right."}
           </span>
         </h1>
 
         {/* Subtitle */}
         <p
-          className="mb-8 max-w-xl text-lg leading-relaxed text-slate-300"
-          style={{ animation: "fade-in-up 0.6s cubic-bezier(0.16,1,0.3,1) 0.35s both" }}
+          className="mb-8 max-w-xl text-lg leading-relaxed"
+          style={{
+            color: "rgba(255,255,255,0.65)",
+            animation: "fade-in-up 0.6s cubic-bezier(0.16,1,0.3,1) 0.35s both",
+          }}
         >
           {isAr
-            ? "من القبول إلى التخرج — كل شيء في مكان واحد، بالعربية والإنجليزية"
-            : "From Admission to Graduation — Everything in One Place, Arabic & English"}
+            ? "نظام متكامل لإدارة الكليات التقنية — المتدربون، المدربون، الجداول، والتقارير الأكاديمية. كل شيء في مكان واحد."
+            : "Complete system for technical colleges — trainees, trainers, schedules, and academic reports. Everything in one place."}
         </p>
 
         {/* CTAs */}
@@ -80,34 +115,39 @@ export function HeroSection({ locale }: HeroSectionProps) {
         >
           <Link
             href="/contact"
-            className="flex items-center gap-2 rounded-full bg-orange-500 px-6 py-3 text-sm font-semibold text-white shadow-lg
-                       transition-all duration-200 hover:-translate-y-0.5 hover:bg-orange-400 hover:shadow-xl active:scale-95"
+            className="flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl active:scale-95"
+            style={{ background: "var(--bs-signal)" }}
           >
-            {isAr ? "ابدأ تجربتك المجانية" : "Start Free Trial"}
+            {isAr ? "ابدأ مجانًا" : "Start for Free"}
             {isAr ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
           </Link>
           <Link
             href="/features"
-            className="flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm
-                       transition-all duration-200 hover:bg-white/20 hover:-translate-y-0.5 active:scale-95"
+            className="flex items-center gap-2 rounded-full border px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition-all duration-200 hover:bg-white/10 hover:-translate-y-0.5 active:scale-95"
+            style={{ borderColor: "rgba(255,255,255,0.2)" }}
           >
             {isAr ? "اكتشف الميزات" : "Explore Features"}
           </Link>
         </div>
 
-        {/* Floating stats */}
+        {/* Stats */}
         <div
-          className="mt-10 flex flex-wrap gap-6"
+          className="mt-10 flex flex-wrap gap-8"
           style={{ animation: "fade-in-up 0.6s cubic-bezier(0.16,1,0.3,1) 0.65s both" }}
         >
           {[
-            { n: "+200", l: isAr ? "كلية" : "Colleges" },
-            { n: "94%",  l: isAr ? "معدل حضور" : "Attendance" },
-            { n: "99.9%",l: isAr ? "وقت تشغيل" : "Uptime" },
+            { n: "+200", l: isAr ? "كلية تقنية تثق بنا" : "Technical Colleges" },
+            { n: "94%",  l: isAr ? "نسبة إتمام البرامج" : "Program Completion" },
+            { n: "3×",   l: isAr ? "أسرع في الجدولة" : "Faster Scheduling" },
           ].map((s) => (
             <div key={s.l}>
-              <p className="text-2xl font-bold text-white">{s.n}</p>
-              <p className="text-xs text-slate-400">{s.l}</p>
+              <p
+                className="text-2xl font-extrabold text-white"
+                style={{ fontFamily: "var(--bs-mono)" }}
+              >
+                {s.n}
+              </p>
+              <p className="text-xs" style={{ color: "rgba(255,255,255,0.45)" }}>{s.l}</p>
             </div>
           ))}
         </div>
@@ -115,11 +155,16 @@ export function HeroSection({ locale }: HeroSectionProps) {
 
       {/* Scroll indicator */}
       <div
-        className="absolute bottom-6 start-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-white/40"
-        style={{ animation: "fade-in-up 0.6s cubic-bezier(0.16,1,0.3,1) 0.8s both" }}
+        className="absolute bottom-6 start-1/2 -translate-x-1/2 flex flex-col items-center gap-1"
+        style={{
+          color: "rgba(255,255,255,0.3)",
+          animation: "fade-in-up 0.6s cubic-bezier(0.16,1,0.3,1) 0.8s both",
+        }}
       >
-        <div className="h-8 w-px bg-gradient-to-b from-transparent to-white/30" />
-        <p className="text-xs font-mono">{isAr ? "مرر للأسفل" : "scroll"}</p>
+        <div className="h-8 w-px bg-gradient-to-b from-transparent to-white/25" />
+        <p className="text-xs" style={{ fontFamily: "var(--bs-mono)" }}>
+          {isAr ? "مرر" : "scroll"}
+        </p>
       </div>
     </section>
   );

@@ -31,16 +31,19 @@ function DiagnosticShuffler({ isAr }: { isAr: boolean }) {
         return (
           <div
             key={label}
-            className="absolute inset-x-0 top-0 flex items-center gap-3 rounded-2xl border border-slate-100 bg-white px-4 py-3 shadow-sm"
+            className="absolute inset-x-0 top-0 flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-sm"
             style={{
+              border: "1px solid rgba(28,28,30,0.07)",
               zIndex,
               transform: `translateY(${translateY}px) scale(${scale})`,
               opacity,
               transition: "all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
             }}
           >
-            <div className="h-2 w-2 rounded-full bg-teal-500" />
-            <span className="text-sm font-medium text-slate-700">{label}</span>
+            <div className="h-2 w-2 rounded-full" style={{ background: "var(--bs-signal)" }} />
+            <span className="text-sm font-medium" style={{ color: "var(--bs-steel)" }}>
+              {label}
+            </span>
           </div>
         );
       })}
@@ -87,14 +90,22 @@ function TelemetryTypewriter({ isAr }: { isAr: boolean }) {
   }, [charIdx, lineIdx, lines]);
 
   return (
-    <div className="mt-4 rounded-xl bg-slate-950 p-4 font-mono text-sm">
+    <div
+      className="mt-4 rounded-xl p-4 text-sm"
+      style={{ background: "var(--bs-steel)", fontFamily: "var(--bs-mono)" }}
+    >
       <div className="flex items-center gap-2 mb-3">
-        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-teal-400" />
-        <span className="text-xs text-teal-400">{isAr ? "بث مباشر" : "Live Feed"}</span>
+        <span
+          className="h-1.5 w-1.5 animate-pulse rounded-full"
+          style={{ background: "var(--bs-signal)" }}
+        />
+        <span className="text-xs" style={{ color: "var(--bs-signal)" }}>
+          {isAr ? "بث مباشر" : "Live Feed"}
+        </span>
       </div>
-      <p className="text-teal-300 min-h-[1.25rem]">
+      <p className="min-h-[1.25rem]" style={{ color: "rgba(255,255,255,0.75)" }}>
         {displayed}
-        <span className="animate-pulse text-teal-400">|</span>
+        <span className="animate-pulse" style={{ color: "var(--bs-signal)" }}>|</span>
       </p>
     </div>
   );
@@ -129,10 +140,10 @@ function SchedulerAnimation({ isAr }: { isAr: boolean }) {
             key={i}
             className="flex-1 rounded-xl py-2 text-center text-sm font-bold transition-all duration-300"
             style={{
-              background: activeDay === i ? "rgb(20 184 166)" : "rgb(248 250 252)",
-              color: activeDay === i ? "white" : "rgb(100 116 139)",
+              background: activeDay === i ? "var(--bs-signal)" : "var(--bs-chalk)",
+              color: activeDay === i ? "white" : "var(--bs-muted)",
               transform: activeDay === i ? "scale(1.1)" : "scale(1)",
-              boxShadow: activeDay === i ? "0 4px 12px rgba(27,169,160,0.35)" : "none",
+              boxShadow: activeDay === i ? "0 4px 12px rgba(255,59,48,0.3)" : "none",
             }}
           >
             {d}
@@ -140,10 +151,11 @@ function SchedulerAnimation({ isAr }: { isAr: boolean }) {
         ))}
       </div>
       <div
-        className="mt-3 w-full rounded-xl py-2 text-center text-sm font-semibold text-teal-700 transition-all"
+        className="mt-3 w-full rounded-xl py-2 text-center text-sm font-semibold transition-all"
         style={{
-          background: activeDay >= 0 ? "rgba(27,169,160,0.1)" : "rgb(248 250 252)",
-          border: activeDay >= 0 ? "1px solid rgba(27,169,160,0.3)" : "1px solid rgb(226 232 240)",
+          color: "var(--bs-steel)",
+          background: activeDay >= 0 ? "rgba(255,59,48,0.08)" : "var(--bs-chalk)",
+          border: activeDay >= 0 ? "1px solid rgba(255,59,48,0.3)" : "1px solid rgba(28,28,30,0.08)",
         }}
       >
         {isAr ? "حفظ الجدول" : "Save Schedule"}
@@ -158,21 +170,21 @@ export function FeaturesGrid({ locale }: FeaturesGridProps) {
 
   const cards = [
     {
-      title: isAr ? "إدارة المتدربين" : "Trainee Management",
+      title: isAr ? "تتبع الأداء لحظيًا" : "Real-time Performance",
       desc: isAr
-        ? "قبول ذكي، تسجيل حضور، ومتابعة أداء متكاملة"
-        : "Smart admission, attendance, and integrated performance tracking",
+        ? "راقب تقدم كل متدرب فور حدوثه مع تنبيهات ذكية فورية"
+        : "Monitor every trainee's progress as it happens with instant smart alerts",
       widget: <DiagnosticShuffler isAr={isAr} />,
     },
     {
-      title: isAr ? "تقارير لحظية" : "Real-time Reports",
+      title: isAr ? "بث مباشر للبيانات" : "Live Data Feed",
       desc: isAr
-        ? "تدفق مستمر للبيانات مع تنبيهات ذكية وتصدير فوري"
-        : "Continuous data stream with smart alerts and instant export",
+        ? "تدفق مستمر للأحداث مع تنبيهات وتصدير فوري للتقارير"
+        : "Continuous event stream with alerts and instant report export",
       widget: <TelemetryTypewriter isAr={isAr} />,
     },
     {
-      title: isAr ? "جداول ذكية" : "Smart Scheduling",
+      title: isAr ? "جدولة ذكية للبرامج" : "Smart Program Scheduling",
       desc: isAr
         ? "جداول تلقائية تتجنب التعارضات وتحسّن توزيع الموارد"
         : "Auto-generated schedules with conflict detection and resource optimization",
@@ -181,15 +193,24 @@ export function FeaturesGrid({ locale }: FeaturesGridProps) {
   ];
 
   return (
-    <section className="bg-slate-50 py-24">
+    <section className="py-24" style={{ background: "var(--bs-concrete)" }}>
       <div className="mx-auto max-w-7xl px-6">
         <FadeInSection className="mb-16 text-center">
-          <h2 className="text-3xl font-bold text-slate-900 md:text-4xl">
-            {isAr ? "أدوات تعمل — ليست مجرد صور" : "Tools That Work — Not Just Screenshots"}
+          <p
+            className="mb-3 text-xs font-semibold uppercase tracking-widest"
+            style={{ color: "var(--bs-signal)", fontFamily: "var(--bs-mono)" }}
+          >
+            {isAr ? "أدوات حقيقية" : "Real Tools"}
+          </p>
+          <h2
+            className="text-3xl font-extrabold md:text-4xl"
+            style={{ color: "var(--bs-steel)", fontFamily: "var(--bs-grotesk)" }}
+          >
+            {isAr ? "ليست مجرد صور — تعمل فعلاً" : "Not Just Screenshots — Actually Working"}
           </h2>
-          <p className="mt-4 text-lg text-slate-500">
+          <p className="mt-4 text-lg" style={{ color: "var(--bs-muted)" }}>
             {isAr
-              ? "كل بطاقة هي نظام مصغّر يعمل فعلاً في المنصة"
+              ? "كل بطاقة هي نظام مصغّر يعمل داخل المنصة"
               : "Every card is a real micro-system running inside the platform"}
           </p>
         </FadeInSection>
@@ -198,10 +219,32 @@ export function FeaturesGrid({ locale }: FeaturesGridProps) {
           {cards.map((card) => (
             <div
               key={card.title}
-              className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-teal-100/50"
+              className="rounded-3xl p-6 transition-all duration-300 hover:-translate-y-1"
+              style={{
+                background: "#fff",
+                border: "1px solid rgba(28,28,30,0.08)",
+                boxShadow: "0 2px 12px rgba(28,28,30,0.06)",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLDivElement).style.boxShadow =
+                  "0 12px 40px rgba(255,59,48,0.10)";
+                (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(255,59,48,0.2)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLDivElement).style.boxShadow =
+                  "0 2px 12px rgba(28,28,30,0.06)";
+                (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(28,28,30,0.08)";
+              }}
             >
-              <h3 className="text-lg font-bold text-slate-900">{card.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-slate-500">{card.desc}</p>
+              <h3
+                className="text-lg font-bold"
+                style={{ color: "var(--bs-steel)", fontFamily: "var(--bs-grotesk)" }}
+              >
+                {card.title}
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--bs-muted)" }}>
+                {card.desc}
+              </p>
               {card.widget}
             </div>
           ))}

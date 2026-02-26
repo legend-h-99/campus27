@@ -45,10 +45,6 @@ import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { UserSwitcher } from "@/components/layout/user-switcher";
 
-// Sidebar dimensions
-const SIDEBAR_EXPANDED = 240;   // px — matches responsive-content.tsx offsets
-const SIDEBAR_COLLAPSED = 64;   // px — icons-only
-
 /* ═══════════════════════════════════════════
    TYPES & NAVIGATION CONFIG
    ═══════════════════════════════════════════ */
@@ -297,7 +293,7 @@ export function Sidebar({ userPermissions }: SidebarProps) {
     return () => window.removeEventListener("resize", handleResize);
   }, [updateForScreenSize]);
 
-  const sidebarExpanded = mode === "full" ? isOpen : mode === "collapsed" ? false : true;
+  const sidebarExpanded = mode === "hidden" ? false : isOpen;
 
   // ═══ Filter navigation by permissions ═══
   const filteredSections = navSections
@@ -630,7 +626,7 @@ export function Sidebar({ userPermissions }: SidebarProps) {
     <aside
       className={cn(
         "fixed top-0 z-40 hidden h-screen flex-col glass-sidebar overflow-hidden transition-all duration-200 ease-in-out md:flex",
-        isOpen ? "w-[240px]" : "w-16",
+        sidebarExpanded ? "w-[240px]" : "w-16",
         isRtl ? "right-0" : "left-0"
       )}
       role="navigation"
@@ -640,10 +636,10 @@ export function Sidebar({ userPermissions }: SidebarProps) {
       <div
         className={cn(
           "flex h-14 shrink-0 items-center border-b border-[var(--border-default)]",
-          isOpen ? "px-4" : "justify-center"
+          sidebarExpanded ? "px-4" : "justify-center"
         )}
       >
-        {isOpen ? (
+        {sidebarExpanded ? (
           <span className="text-sm font-semibold tracking-tight text-[var(--color-primary)]">
             سهيل
           </span>
@@ -656,20 +652,20 @@ export function Sidebar({ userPermissions }: SidebarProps) {
       <nav className="sidebar-nav flex-1 overflow-y-auto px-2 py-2" aria-label="Primary">
         {visibleSections.map((section, idx) => (
           <div key={idx}>
-            {idx > 0 && <div className={isOpen ? "my-2" : "my-1.5"} />}
-            {section.titleKey && isOpen && (
+            {idx > 0 && <div className={sidebarExpanded ? "my-2" : "my-1.5"} />}
+            {section.titleKey && sidebarExpanded && (
               <p className="mb-1 mt-5 px-3 text-[10px] font-medium uppercase tracking-widest text-[var(--text-muted)]">
-                {t(`nav.sections.${section.titleKey}`)}
+                {t(section.titleKey)}
               </p>
             )}
             <ul className="space-y-0.5" role="list">
-              {section.items.map((item) => renderNavItem(item, isOpen))}
+              {section.items.map((item) => renderNavItem(item, sidebarExpanded))}
             </ul>
           </div>
         ))}
 
         {/* ═══ Capacity Card (only expanded) ═══ */}
-        {renderCapacityCard(isOpen)}
+        {renderCapacityCard(sidebarExpanded)}
       </nav>
 
       {/* ═══ Bottom Section: Settings + Workflows ═══ */}
@@ -677,46 +673,49 @@ export function Sidebar({ userPermissions }: SidebarProps) {
         {/* Workflow builder trigger */}
         <button
           onClick={() => openWorkflowBuilder()}
-          title={!isOpen ? t("workflows") : undefined}
+          title={!sidebarExpanded ? t("workflows") : undefined}
           aria-label={t("workflows")}
           className={cn(
             "group mb-0.5 flex w-full items-center rounded-lg py-2 text-sm transition-colors",
-            isOpen ? "gap-3 px-3" : "justify-center px-0",
+            sidebarExpanded ? "gap-3 px-3" : "justify-center px-0",
             "text-[var(--text-secondary)] hover:bg-[var(--surface-2)] hover:text-[var(--text-primary)]"
           )}
         >
           <Workflow className="h-[18px] w-[18px] shrink-0" />
-          {isOpen && (
+          {sidebarExpanded && (
             <span className="truncate">{t("workflows")}</span>
           )}
         </button>
         <ul className="space-y-0.5" role="list">
-          {filteredBottomItems.map((item) => renderNavItem(item, isOpen))}
+          {filteredBottomItems.map((item) => renderNavItem(item, sidebarExpanded))}
         </ul>
       </div>
 
       {/* ═══ User Profile Footer ═══ */}
-      {renderUserProfile(isOpen)}
+      {renderUserProfile(sidebarExpanded)}
 
       {/* ═══ Toggle collapse button ═══ */}
-      <div className="mt-auto shrink-0 border-t border-[var(--border-default)] p-2">
+      <div className="shrink-0 border-t border-[var(--border-default)] p-2">
         <button
           onClick={toggle}
-          aria-label={isOpen ? "تصغير القائمة" : "توسيع القائمة"}
+          aria-label={sidebarExpanded
+            ? (locale === "ar" ? "تصغير القائمة" : "Collapse sidebar")
+            : (locale === "ar" ? "توسيع القائمة" : "Expand sidebar")
+          }
           className={cn(
             "flex w-full items-center gap-2 rounded-lg py-2 text-[var(--text-muted)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--text-primary)]",
-            isOpen ? "px-3" : "justify-center px-0"
+            sidebarExpanded ? "px-3" : "justify-center px-0"
           )}
         >
           {isRtl
-            ? (isOpen
+            ? (sidebarExpanded
                 ? <ChevronRight className="h-4 w-4 shrink-0" />
                 : <ChevronLeft className="h-4 w-4 shrink-0" />)
-            : (isOpen
+            : (sidebarExpanded
                 ? <ChevronLeft className="h-4 w-4 shrink-0" />
                 : <ChevronRight className="h-4 w-4 shrink-0" />)
           }
-          {isOpen && <span className="text-xs">تصغير</span>}
+          {sidebarExpanded && <span className="text-xs">{locale === "ar" ? "تصغير" : "Collapse"}</span>}
         </button>
       </div>
     </aside>

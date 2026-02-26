@@ -77,26 +77,18 @@ export function Header({ user }: HeaderProps) {
     return () => document.removeEventListener("keydown", handleGlobalKey);
   }, [openPalette]);
 
-  // Calculate header positioning based on sidebar mode
-  const getHeaderPosition = () => {
-    if (mode === "hidden") {
-      return "inset-x-0";
-    }
-    if (mode === "collapsed") {
-      return isRtl
-        ? isOpen ? "left-0 right-[280px]" : "left-0 right-20"
-        : isOpen ? "left-[280px] right-0" : "left-20 right-0";
-    }
-    return isRtl
-      ? isOpen ? "left-0 right-[280px]" : "left-0 right-20"
-      : isOpen ? "left-[280px] right-0" : "left-20 right-0";
-  };
+  // Sidebar offset for desktop header positioning
+  const sidebarExpanded = mode === "hidden" ? false : isOpen;
 
   return (
     <header
       className={cn(
-        "glass-header fixed top-0 z-30 flex h-16 items-center justify-between px-4 transition-all duration-300 md:h-[72px] md:px-6",
-        getHeaderPosition()
+        "glass-header fixed top-0 z-30 flex h-14 items-center justify-between px-4 transition-all duration-300",
+        mode === "hidden"
+          ? "inset-x-0"
+          : isRtl
+            ? (sidebarExpanded ? "left-0 right-[240px]" : "left-0 right-16")
+            : (sidebarExpanded ? "right-0 left-[240px]" : "right-0 left-16"),
       )}
     >
       {/* Left side */}

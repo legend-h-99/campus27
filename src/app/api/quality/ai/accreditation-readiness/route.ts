@@ -6,12 +6,17 @@
  * Aggregates quality data and assesses NCAAA accreditation readiness
  */
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { assessAccreditationReadiness } from "@/services/ai/quality-analyzer";
 import { checkRateLimit } from "@/lib/ai-config";
+import { PERMISSIONS } from "@/lib/permissions";
+import { guardRequest } from "@/lib/authorization";
 
-export async function POST() {
+export async function POST(request: NextRequest) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_VIEW, PERMISSIONS.AI_INSIGHTS], "quality_ai_accreditation", "POST");
+  if (!check.ok) return check.response;
+
   try {
     // TODO: Replace with actual session auth
     const userId = "system";

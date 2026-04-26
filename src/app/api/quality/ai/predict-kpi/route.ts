@@ -11,12 +11,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { predictKpiTrend } from "@/services/ai/quality-analyzer";
 import { checkRateLimit } from "@/lib/ai-config";
+import { PERMISSIONS } from "@/lib/permissions";
+import { guardRequest } from "@/lib/authorization";
 
 interface PredictKpiRequest {
   kpiCode: string;
 }
 
 export async function POST(request: NextRequest) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_KPIS_VIEW, PERMISSIONS.AI_INSIGHTS], "quality_ai_predict_kpi", "POST");
+  if (!check.ok) return check.response;
+
   try {
     const body: PredictKpiRequest = await request.json();
     const { kpiCode } = body;

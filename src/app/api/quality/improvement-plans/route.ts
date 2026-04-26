@@ -1,7 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { PERMISSIONS } from "@/lib/permissions";
+import { guardRequest } from "@/lib/authorization";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_PLANS_VIEW], "quality_improvement_plans", "GET");
+  if (!check.ok) return check.response;
+
   try {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status");
@@ -14,13 +19,9 @@ export async function GET(request: Request) {
     const plans = await prisma.improvementPlan.findMany({
       where,
       include: {
-        owner: {
-          select: { id: true, fullNameAr: true, fullNameEn: true },
-        },
+        owner: { select: { id: true, fullNameAr: true, fullNameEn: true } },
         _count: { select: { actions: true } },
-        relatedFinding: {
-          select: { id: true, descriptionAr: true, severity: true },
-        },
+        relatedFinding: { select: { id: true, descriptionAr: true, severity: true } },
       },
       orderBy: { createdAt: "desc" },
     });
@@ -34,7 +35,10 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_PLANS_CREATE], "quality_improvement_plans", "POST");
+  if (!check.ok) return check.response;
+
   try {
     const body = await request.json();
 
@@ -48,9 +52,7 @@ export async function POST(request: Request) {
         descriptionAr: body.descriptionAr,
         objectives: body.objectives,
         startDate: body.startDate ? new Date(body.startDate) : undefined,
-        targetCompletionDate: body.targetCompletionDate
-          ? new Date(body.targetCompletionDate)
-          : undefined,
+        targetCompletionDate: body.targetCompletionDate ? new Date(body.targetCompletionDate) : undefined,
         ownerId: body.ownerId,
         budget: body.budget,
       },

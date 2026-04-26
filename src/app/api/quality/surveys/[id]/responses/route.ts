@@ -1,10 +1,15 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { PERMISSIONS } from "@/lib/permissions";
+import { guardRequest } from "@/lib/authorization";
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_SURVEYS_ANALYZE], "quality_survey_responses", "GET");
+  if (!check.ok) return check.response;
+
   try {
     const { id } = await params;
 
@@ -36,23 +41,19 @@ export async function GET(
 }
 
 export async function POST(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_SURVEYS_VIEW], "quality_survey_responses", "POST");
+  if (!check.ok) return check.response;
+
   try {
     const { id } = await params;
     const body = await request.json();
 
-    // Verify survey exists
-    const survey = await prisma.qualitySurvey.findUnique({
-      where: { id },
-    });
-
+    const survey = await prisma.qualitySurvey.findUnique({ where: { id } });
     if (!survey) {
-      return NextResponse.json(
-        { success: false, error: "Survey not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: "Survey not found" }, { status: 404 });
     }
 
     const response = await prisma.surveyResponse.create({
@@ -65,7 +66,6 @@ export async function POST(
       },
     });
 
-    // Increment totalResponses on the survey
     await prisma.qualitySurvey.update({
       where: { id },
       data: { totalResponses: { increment: 1 } },

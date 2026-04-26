@@ -11,6 +11,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { generateQualityReportWithAI } from "@/services/ai/quality-analyzer";
 import { checkRateLimit } from "@/lib/ai-config";
+import { PERMISSIONS } from "@/lib/permissions";
+import { guardRequest } from "@/lib/authorization";
 
 interface GenerateReportRequest {
   periodStart: string;
@@ -18,6 +20,9 @@ interface GenerateReportRequest {
 }
 
 export async function POST(request: NextRequest) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_REPORTS_CREATE, PERMISSIONS.AI_REPORTS], "quality_ai_report", "POST");
+  if (!check.ok) return check.response;
+
   try {
     const body: GenerateReportRequest = await request.json();
     const { periodStart, periodEnd } = body;

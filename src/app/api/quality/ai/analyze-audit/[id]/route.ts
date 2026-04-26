@@ -10,11 +10,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { analyzeAuditFindingsWithAI } from "@/services/ai/quality-analyzer";
 import { checkRateLimit } from "@/lib/ai-config";
+import { PERMISSIONS } from "@/lib/permissions";
+import { guardRequest } from "@/lib/authorization";
 
 export async function POST(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_AUDITS_VIEW, PERMISSIONS.AI_INSIGHTS], "quality_ai_audit_analysis", "POST");
+  if (!check.ok) return check.response;
+
   try {
     const { id: auditId } = await params;
 

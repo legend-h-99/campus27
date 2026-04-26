@@ -44,12 +44,19 @@ export async function POST(request: NextRequest) {
     const MAX_MESSAGE_LENGTH = 2000;
     const trimmedMessage = message.trim().substring(0, MAX_MESSAGE_LENGTH);
 
-    // Get real user session
+    // Get real user session and check AI chat permission
     const session = await auth();
     if (!session?.user) {
       return Response.json(
         { error: locale === "ar" ? "يرجى تسجيل الدخول أولاً" : "Please login first" },
         { status: 401 }
+      );
+    }
+    const { hasAnyPermission, PERMISSIONS } = await import("@/lib/permissions");
+    if (!hasAnyPermission(session.user.permissions, [PERMISSIONS.AI_CHAT])) {
+      return Response.json(
+        { error: locale === "ar" ? "ليس لديك صلاحية الوصول لهذه الميزة" : "Access denied" },
+        { status: 403 }
       );
     }
 

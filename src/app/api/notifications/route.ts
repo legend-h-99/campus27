@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
+import { PERMISSIONS } from "@/lib/permissions";
+import { guardRequest } from "@/lib/authorization";
 
 export async function GET(request: NextRequest) {
-  try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
-    }
+  const check = await guardRequest(request, [PERMISSIONS.NOTIFICATIONS_VIEW], "notifications", "GET");
+  if (!check.ok) return check.response;
+  const { session } = check;
 
+  try {
     const searchParams = request.nextUrl.searchParams;
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "20");
@@ -40,13 +40,12 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function PATCH(request: Request) {
-  try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
-    }
+export async function PATCH(request: NextRequest) {
+  const check = await guardRequest(request, [PERMISSIONS.NOTIFICATIONS_VIEW], "notifications", "PATCH");
+  if (!check.ok) return check.response;
+  const { session } = check;
 
+  try {
     const body = await request.json();
 
     if (body.markAllRead) {

@@ -1,13 +1,16 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { PERMISSIONS } from "@/lib/permissions";
+import { guardRequest } from "@/lib/authorization";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_VIEW], "quality_meetings", "GET");
+  if (!check.ok) return check.response;
+
   try {
     const meetings = await prisma.qualityMeeting.findMany({
       include: {
-        createdBy: {
-          select: { id: true, fullNameAr: true, fullNameEn: true },
-        },
+        createdBy: { select: { id: true, fullNameAr: true, fullNameEn: true } },
       },
       orderBy: { meetingDate: "desc" },
     });
@@ -21,7 +24,10 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_CREATE], "quality_meetings", "POST");
+  if (!check.ok) return check.response;
+
   try {
     const body = await request.json();
 

@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "Campus27",
+    "appName": "Saohil1",
     "appDescription": "Technical College Management System",
     "loading": "Loading...",
     "save": "Save",
@@ -83,7 +83,8 @@
     "users": "Users",
     "main": "Main",
     "management": "Management",
-    "advanced": "Advanced"
+    "advanced": "Advanced",
+    "workflows": "Workflows"
   },
   "dashboard": {
     "welcome": "Welcome",
@@ -735,12 +736,12 @@
     "english": "English"
   },
   "ai": {
-    "title": "Campus27 AI Assistant",
+    "title": "Saohil1 AI Assistant",
     "subtitle": "Powered by AI",
     "welcomeTitle": "Hello! How can I help you?",
     "welcomeDesc": "Ask me anything about the college: statistics, schedules, reports, and recommendations",
     "inputPlaceholder": "Type your question here...",
-    "poweredBy": "Powered by Campus27 AI",
+    "poweredBy": "Powered by Saohil1 AI",
     "assistantName": "AI Assistant",
     "insightsTitle": "AI Insights",
     "insightsSubtitle": "Data-driven analytics and recommendations",

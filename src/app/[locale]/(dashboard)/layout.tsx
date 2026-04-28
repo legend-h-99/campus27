@@ -6,6 +6,10 @@ import { Header } from "@/components/layout/header";
 import { SessionProvider } from "@/components/shared/session-provider";
 import { ResponsiveContent } from "@/components/layout/responsive-content";
 import { AIChatbot } from "@/components/ai/ai-chatbot";
+import { CommandPalette } from "@/components/ui/command-palette";
+import { PageTransition } from "@/components/ui/page-transition";
+import { ToastContainer } from "@/components/ui/toast";
+import { WorkflowBuilderModal } from "@/components/workflows/workflow-builder-modal";
 
 export default async function DashboardLayout({
   children,
@@ -42,9 +46,14 @@ export default async function DashboardLayout({
           }}
         />
         <div id="main-content">
-          <ResponsiveContent>{children}</ResponsiveContent>
+          <PageTransition>
+            <ResponsiveContent>{children}</ResponsiveContent>
+          </PageTransition>
         </div>
         <AIChatbot />
+        <CommandPalette />
+        <ToastContainer />
+        <WorkflowBuilderModal />
       </div>
     </SessionProvider>
   );

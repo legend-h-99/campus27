@@ -21,6 +21,12 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} dir={dir}>
+      <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,700;1,800&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body className="min-h-screen bg-background text-foreground antialiased">
         <NextIntlClientProvider messages={messages}>
           {children}

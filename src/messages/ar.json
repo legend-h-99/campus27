@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "Campus27",
+    "appName": "Saohil1",
     "appDescription": "نظام إدارة الكليات التقنية",
     "loading": "جاري التحميل...",
     "save": "حفظ",
@@ -83,7 +83,8 @@
     "users": "المستخدمون",
     "main": "الرئيسية",
     "management": "الإدارة والتشغيل",
-    "advanced": "متقدم"
+    "advanced": "متقدم",
+    "workflows": "سير العمل الآلي"
   },
   "dashboard": {
     "welcome": "مرحبًا",
@@ -735,12 +736,12 @@
     "english": "الإنجليزية"
   },
   "ai": {
-    "title": "مساعد Campus27 الذكي",
+    "title": "مساعد Saohil1 الذكي",
     "subtitle": "مدعوم بالذكاء الاصطناعي",
     "welcomeTitle": "مرحبًا! كيف يمكنني مساعدتك؟",
     "welcomeDesc": "اسألني عن أي شيء يخص الكلية: الإحصائيات، الجداول، التقارير، والتوصيات",
     "inputPlaceholder": "اكتب سؤالك هنا...",
-    "poweredBy": "مدعوم بالذكاء الاصطناعي من Campus27",
+    "poweredBy": "مدعوم بالذكاء الاصطناعي من Saohil1",
     "assistantName": "المساعد الذكي",
     "insightsTitle": "رؤى الذكاء الاصطناعي",
     "insightsSubtitle": "تحليلات وتوصيات مبنية على البيانات",

@@ -1241,6 +1241,89 @@ model AIInsightCache {
   @@map("ai_insight_cache")
 }
 
+// ============== MARKETING MODELS ==============
+
+model Session {
+  id        String   @id
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  events Event[]
+  leads  Lead[]
+
+  @@map("marketing_sessions")
+}
+
+model Event {
+  id         String   @id @default(cuid())
+  sessionId  String
+  type       String
+  payload    Json     @default("{}")
+  occurredAt DateTime
+  createdAt  DateTime @default(now())
+
+  session Session @relation(fields: [sessionId], references: [id])
+
+  @@index([sessionId])
+  @@index([type])
+  @@map("marketing_events")
+}
+
+model Lead {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  intent    String?
+  utm       Json     @default("{}")
+  metadata  Json     @default("{}")
+  sessionId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  session Session? @relation(fields: [sessionId], references: [id])
+
+  @@index([email])
+  @@map("marketing_leads")
+}
+
+// ============== WORKFLOW MODELS ==============
+
+model Workflow {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  status      String   @default("draft")  // draft | active | archived
+  role        String?
+  schedule    String?
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  nodes WorkflowNode[]
+
+  @@index([createdById])
+  @@index([status])
+  @@map("workflows")
+}
+
+model WorkflowNode {
+  id          String   @id @default(cuid())
+  workflowId  String
+  type        String   // trigger | action | condition
+  title       String
+  description String?
+  position    Int
+  config      Json     @default("{}")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
+  @@index([workflowId])
+  @@map("workflow_nodes")
+}
+
 // ============== NOTIFICATION & AUDIT MODELS ==============
 
 model Notification {

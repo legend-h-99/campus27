@@ -6,6 +6,7 @@ import { getPermissionsForRole, type Role, type Permission } from "@/lib/permiss
 import "@/types/auth";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  trustHost: true,
   providers: [
     Credentials({
       name: "credentials",

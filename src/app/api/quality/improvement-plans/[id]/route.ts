@@ -1,36 +1,30 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { PERMISSIONS } from "@/lib/permissions";
+import { guardRequest } from "@/lib/authorization";
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_PLANS_VIEW], "quality_improvement_plans", "GET");
+  if (!check.ok) return check.response;
+
   try {
     const { id } = await params;
 
     const plan = await prisma.improvementPlan.findUnique({
       where: { id },
       include: {
-        owner: {
-          select: { id: true, fullNameAr: true, fullNameEn: true },
-        },
-        createdBy: {
-          select: { id: true, fullNameAr: true, fullNameEn: true },
-        },
-        relatedFinding: {
-          select: { id: true, descriptionAr: true, severity: true, status: true },
-        },
-        actions: {
-          orderBy: { createdAt: "asc" },
-        },
+        owner: { select: { id: true, fullNameAr: true, fullNameEn: true } },
+        createdBy: { select: { id: true, fullNameAr: true, fullNameEn: true } },
+        relatedFinding: { select: { id: true, descriptionAr: true, severity: true, status: true } },
+        actions: { orderBy: { createdAt: "asc" } },
       },
     });
 
     if (!plan) {
-      return NextResponse.json(
-        { success: false, error: "Improvement plan not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: "Improvement plan not found" }, { status: 404 });
     }
 
     return NextResponse.json({ success: true, data: plan });
@@ -43,9 +37,12 @@ export async function GET(
 }
 
 export async function PATCH(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_PLANS_CREATE], "quality_improvement_plans", "PATCH");
+  if (!check.ok) return check.response;
+
   try {
     const { id } = await params;
     const body = await request.json();
@@ -60,15 +57,10 @@ export async function PATCH(
     if (body.ownerId !== undefined) data.ownerId = body.ownerId;
     if (body.budget !== undefined) data.budget = body.budget;
     if (body.startDate !== undefined) data.startDate = new Date(body.startDate);
-    if (body.targetCompletionDate !== undefined)
-      data.targetCompletionDate = new Date(body.targetCompletionDate);
-    if (body.actualCompletionDate !== undefined)
-      data.actualCompletionDate = new Date(body.actualCompletionDate);
+    if (body.targetCompletionDate !== undefined) data.targetCompletionDate = new Date(body.targetCompletionDate);
+    if (body.actualCompletionDate !== undefined) data.actualCompletionDate = new Date(body.actualCompletionDate);
 
-    const plan = await prisma.improvementPlan.update({
-      where: { id },
-      data,
-    });
+    const plan = await prisma.improvementPlan.update({ where: { id }, data });
 
     return NextResponse.json({ success: true, data: plan });
   } catch (error) {

@@ -1,10 +1,15 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { PERMISSIONS } from "@/lib/permissions";
+import { guardRequest } from "@/lib/authorization";
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_AUDITS_VIEW], "quality_audit_findings", "GET");
+  if (!check.ok) return check.response;
+
   try {
     const { id } = await params;
 
@@ -28,23 +33,19 @@ export async function GET(
 }
 
 export async function POST(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_AUDITS_MANAGE_FINDINGS], "quality_audit_findings", "POST");
+  if (!check.ok) return check.response;
+
   try {
     const { id } = await params;
     const body = await request.json();
 
-    // Verify audit exists
-    const audit = await prisma.qualityAudit.findUnique({
-      where: { id },
-    });
-
+    const audit = await prisma.qualityAudit.findUnique({ where: { id } });
     if (!audit) {
-      return NextResponse.json(
-        { success: false, error: "Audit not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: "Audit not found" }, { status: 404 });
     }
 
     const finding = await prisma.auditFinding.create({

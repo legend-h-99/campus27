@@ -1,7 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { PERMISSIONS } from "@/lib/permissions";
+import { guardRequest } from "@/lib/authorization";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_KPIS_VIEW], "quality_kpi_measurements", "GET");
+  if (!check.ok) return check.response;
+
   try {
     const { searchParams } = new URL(request.url);
     const kpiId = searchParams.get("kpiId");
@@ -24,9 +29,7 @@ export async function GET(request: Request) {
     const [measurements, total] = await Promise.all([
       prisma.kpiMeasurement.findMany({
         where,
-        include: {
-          kpi: { select: { id: true, kpiCode: true, nameAr: true, nameEn: true } },
-        },
+        include: { kpi: { select: { id: true, kpiCode: true, nameAr: true, nameEn: true } } },
         orderBy: { measurementDate: "desc" },
         skip,
         take: limit,
@@ -37,12 +40,7 @@ export async function GET(request: Request) {
     return NextResponse.json({
       success: true,
       data: measurements,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
+      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
     });
   } catch (error) {
     return NextResponse.json(
@@ -52,27 +50,22 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_KPIS_MEASURE], "quality_kpi_measurements", "POST");
+  if (!check.ok) return check.response;
+
   try {
     const body = await request.json();
 
-    // Fetch the KPI to auto-calculate status
-    const kpi = await prisma.qualityKpi.findUnique({
-      where: { id: body.kpiId },
-    });
-
+    const kpi = await prisma.qualityKpi.findUnique({ where: { id: body.kpiId } });
     if (!kpi) {
-      return NextResponse.json(
-        { success: false, error: "KPI not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: "KPI not found" }, { status: 404 });
     }
 
     const actualValue = body.actualValue;
     const targetValue = body.targetValue ?? kpi.targetValue;
     const achievementRate = targetValue > 0 ? (actualValue / targetValue) * 100 : 0;
 
-    // Auto-calculate status based on achievement
     let status: "EXCEEDS" | "MEETS" | "BELOW" | "CRITICAL";
     if (achievementRate >= 100) {
       status = "EXCEEDS";

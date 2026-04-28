@@ -1,24 +1,22 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { PERMISSIONS } from "@/lib/permissions";
+import { guardRequest } from "@/lib/authorization";
 
 export async function POST(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_PLANS_CREATE], "quality_improvement_actions", "POST");
+  if (!check.ok) return check.response;
+
   try {
     const { id } = await params;
     const body = await request.json();
 
-    // Verify plan exists
-    const plan = await prisma.improvementPlan.findUnique({
-      where: { id },
-    });
-
+    const plan = await prisma.improvementPlan.findUnique({ where: { id } });
     if (!plan) {
-      return NextResponse.json(
-        { success: false, error: "Improvement plan not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: "Improvement plan not found" }, { status: 404 });
     }
 
     const action = await prisma.improvementAction.create({
@@ -41,9 +39,12 @@ export async function POST(
 }
 
 export async function PATCH(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_PLANS_CREATE], "quality_improvement_actions", "PATCH");
+  if (!check.ok) return check.response;
+
   try {
     const { id } = await params;
     const { searchParams } = new URL(request.url);
@@ -58,16 +59,12 @@ export async function PATCH(
 
     const body = await request.json();
 
-    // Verify the action belongs to this plan
     const existingAction = await prisma.improvementAction.findFirst({
       where: { id: actionId, planId: id },
     });
 
     if (!existingAction) {
-      return NextResponse.json(
-        { success: false, error: "Action not found in this plan" },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: "Action not found in this plan" }, { status: 404 });
     }
 
     const data: Record<string, unknown> = {};
@@ -79,10 +76,7 @@ export async function PATCH(
     if (body.responsiblePerson !== undefined) data.responsiblePerson = body.responsiblePerson;
     if (body.dueDate !== undefined) data.dueDate = new Date(body.dueDate);
 
-    const action = await prisma.improvementAction.update({
-      where: { id: actionId },
-      data,
-    });
+    const action = await prisma.improvementAction.update({ where: { id: actionId }, data });
 
     return NextResponse.json({ success: true, data: action });
   } catch (error) {

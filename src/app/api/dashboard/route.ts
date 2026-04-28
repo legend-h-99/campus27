@@ -1,7 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { PERMISSIONS } from "@/lib/permissions";
+import { guardRequest } from "@/lib/authorization";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const check = await guardRequest(request, [PERMISSIONS.DASHBOARD_VIEW], "dashboard", "GET");
+  if (!check.ok) return check.response;
+
   try {
     const [
       trainersCount,

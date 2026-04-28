@@ -11,6 +11,8 @@ import { AI_FEATURES, checkRateLimit } from "@/lib/ai-config";
 import { getFullDataContext, contextToText } from "@/services/ai/data-aggregator";
 import { generateText } from "@/services/ai/llm-client";
 import { getReportPrompt } from "@/services/ai/prompt-templates";
+import { PERMISSIONS } from "@/lib/permissions";
+import { guardRequest } from "@/lib/authorization";
 
 interface ReportRequest {
   reportType: string;
@@ -18,6 +20,10 @@ interface ReportRequest {
 }
 
 export async function POST(request: NextRequest) {
+  const check = await guardRequest(request, [PERMISSIONS.AI_REPORTS], "ai_report", "POST");
+  if (!check.ok) return check.response as any;
+  const { session } = check;
+
   try {
     const body: ReportRequest = await request.json();
     const { reportType, locale = "ar" } = body;
@@ -29,8 +35,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // TODO: Replace with actual session auth
-    const userId = "system";
+    const userId = session.user.id;
     if (!checkRateLimit(userId)) {
       return Response.json(
         { error: "Rate limit exceeded" },

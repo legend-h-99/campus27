@@ -1,7 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { PERMISSIONS } from "@/lib/permissions";
+import { guardRequest } from "@/lib/authorization";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_VIEW], "quality_documents", "GET");
+  if (!check.ok) return check.response;
+
   try {
     const { searchParams } = new URL(request.url);
     const docType = searchParams.get("docType");
@@ -14,9 +19,7 @@ export async function GET(request: Request) {
     const documents = await prisma.qualityDocument.findMany({
       where,
       include: {
-        owner: {
-          select: { id: true, fullNameAr: true, fullNameEn: true },
-        },
+        owner: { select: { id: true, fullNameAr: true, fullNameEn: true } },
       },
       orderBy: { createdAt: "desc" },
     });
@@ -30,7 +33,10 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_DOCS_MANAGE], "quality_documents", "POST");
+  if (!check.ok) return check.response;
+
   try {
     const body = await request.json();
 

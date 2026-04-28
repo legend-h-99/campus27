@@ -1,7 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { PERMISSIONS } from "@/lib/permissions";
+import { guardRequest } from "@/lib/authorization";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_AUDITS_VIEW], "quality_audits", "GET");
+  if (!check.ok) return check.response;
+
   try {
     const { searchParams } = new URL(request.url);
     const type = searchParams.get("type");
@@ -42,7 +47,10 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_AUDITS_SCHEDULE], "quality_audits", "POST");
+  if (!check.ok) return check.response;
+
   try {
     const body = await request.json();
 

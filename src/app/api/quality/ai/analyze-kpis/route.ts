@@ -6,12 +6,17 @@
  * Fetches latest KPI measurements and analyzes them with AI
  */
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { analyzeKpisWithAI } from "@/services/ai/quality-analyzer";
 import { checkRateLimit } from "@/lib/ai-config";
+import { PERMISSIONS } from "@/lib/permissions";
+import { guardRequest } from "@/lib/authorization";
 
-export async function POST() {
+export async function POST(request: NextRequest) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_KPIS_VIEW, PERMISSIONS.AI_INSIGHTS], "quality_ai_kpis", "POST");
+  if (!check.ok) return check.response;
+
   try {
     // TODO: Replace with actual session auth
     const userId = "system";

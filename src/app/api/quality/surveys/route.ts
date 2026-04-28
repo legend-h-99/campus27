@@ -1,7 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { PERMISSIONS } from "@/lib/permissions";
+import { guardRequest } from "@/lib/authorization";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_SURVEYS_VIEW], "quality_surveys", "GET");
+  if (!check.ok) return check.response;
+
   try {
     const { searchParams } = new URL(request.url);
     const surveyType = searchParams.get("surveyType");
@@ -13,9 +18,7 @@ export async function GET(request: Request) {
 
     const surveys = await prisma.qualitySurvey.findMany({
       where,
-      include: {
-        _count: { select: { responses: true } },
-      },
+      include: { _count: { select: { responses: true } } },
       orderBy: { createdAt: "desc" },
     });
 
@@ -28,7 +31,10 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_SURVEYS_CREATE], "quality_surveys", "POST");
+  if (!check.ok) return check.response;
+
   try {
     const body = await request.json();
 

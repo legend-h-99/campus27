@@ -1,21 +1,22 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { PERMISSIONS } from "@/lib/permissions";
+import { guardRequest } from "@/lib/authorization";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_STANDARDS_VIEW], "quality_standards", "GET");
+  if (!check.ok) return check.response;
+
   try {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get("category");
 
     const where: Record<string, unknown> = {};
-    if (category) {
-      where.category = category;
-    }
+    if (category) where.category = category;
 
     const standards = await prisma.qualityStandard.findMany({
       where,
-      include: {
-        _count: { select: { kpis: true } },
-      },
+      include: { _count: { select: { kpis: true } } },
       orderBy: { weight: "desc" },
     });
 
@@ -28,7 +29,10 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_STANDARDS_MANAGE], "quality_standards", "POST");
+  if (!check.ok) return check.response;
+
   try {
     const body = await request.json();
 

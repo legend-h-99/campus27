@@ -1,7 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { PERMISSIONS } from "@/lib/permissions";
+import { guardRequest } from "@/lib/authorization";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_KPIS_VIEW], "quality_kpis", "GET");
+  if (!check.ok) return check.response;
+
   try {
     const { searchParams } = new URL(request.url);
     const standardId = searchParams.get("standardId");
@@ -19,13 +24,7 @@ export async function GET(request: Request) {
       where,
       include: {
         standard: {
-          select: {
-            id: true,
-            standardCode: true,
-            nameAr: true,
-            nameEn: true,
-            category: true,
-          },
+          select: { id: true, standardCode: true, nameAr: true, nameEn: true, category: true },
         },
         measurements: {
           take: 1,
@@ -44,7 +43,10 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_KPIS_MANAGE], "quality_kpis", "POST");
+  if (!check.ok) return check.response;
+
   try {
     const body = await request.json();
 

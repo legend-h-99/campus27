@@ -1,7 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { PERMISSIONS } from "@/lib/permissions";
+import { guardRequest } from "@/lib/authorization";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_REPORTS_VIEW], "quality_reports", "GET");
+  if (!check.ok) return check.response;
+
   try {
     const { searchParams } = new URL(request.url);
     const reportType = searchParams.get("reportType");
@@ -14,9 +19,7 @@ export async function GET(request: Request) {
     const reports = await prisma.qualityReport.findMany({
       where,
       include: {
-        preparedBy: {
-          select: { id: true, fullNameAr: true, fullNameEn: true },
-        },
+        preparedBy: { select: { id: true, fullNameAr: true, fullNameEn: true } },
       },
       orderBy: { createdAt: "desc" },
     });
@@ -30,7 +33,10 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_REPORTS_CREATE], "quality_reports", "POST");
+  if (!check.ok) return check.response;
+
   try {
     const body = await request.json();
 
@@ -41,12 +47,8 @@ export async function POST(request: Request) {
         titleEn: body.titleEn,
         departmentId: body.departmentId,
         academicYear: body.academicYear,
-        reportPeriodStart: body.reportPeriodStart
-          ? new Date(body.reportPeriodStart)
-          : undefined,
-        reportPeriodEnd: body.reportPeriodEnd
-          ? new Date(body.reportPeriodEnd)
-          : undefined,
+        reportPeriodStart: body.reportPeriodStart ? new Date(body.reportPeriodStart) : undefined,
+        reportPeriodEnd: body.reportPeriodEnd ? new Date(body.reportPeriodEnd) : undefined,
         executiveSummary: body.executiveSummary,
         recommendations: body.recommendations,
         preparedById: body.preparedById,

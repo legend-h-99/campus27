@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { PERMISSIONS } from "@/lib/permissions";
+import { guardRequest } from "@/lib/authorization";
 
 export async function GET(request: NextRequest) {
+  const check = await guardRequest(request, [PERMISSIONS.TRAINEES_VIEW], "trainees", "GET");
+  if (!check.ok) return check.response;
+
   try {
     const searchParams = request.nextUrl.searchParams;
     const page = parseInt(searchParams.get("page") || "1");
@@ -50,7 +55,10 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  const check = await guardRequest(request, [PERMISSIONS.TRAINEES_CREATE], "trainees", "POST");
+  if (!check.ok) return check.response;
+
   try {
     const body = await request.json();
     const { hash } = await import("bcryptjs");

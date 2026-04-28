@@ -1,27 +1,26 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { PERMISSIONS } from "@/lib/permissions";
+import { guardRequest } from "@/lib/authorization";
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_AUDITS_VIEW], "quality_audits", "GET");
+  if (!check.ok) return check.response;
+
   try {
     const { id } = await params;
 
     const audit = await prisma.qualityAudit.findUnique({
       where: { id },
       include: {
-        leadAuditor: {
-          select: { id: true, fullNameAr: true, fullNameEn: true },
-        },
-        createdBy: {
-          select: { id: true, fullNameAr: true, fullNameEn: true },
-        },
+        leadAuditor: { select: { id: true, fullNameAr: true, fullNameEn: true } },
+        createdBy: { select: { id: true, fullNameAr: true, fullNameEn: true } },
         findings: {
           include: {
-            standard: {
-              select: { id: true, standardCode: true, nameAr: true, nameEn: true },
-            },
+            standard: { select: { id: true, standardCode: true, nameAr: true, nameEn: true } },
           },
           orderBy: { createdAt: "desc" },
         },
@@ -29,10 +28,7 @@ export async function GET(
     });
 
     if (!audit) {
-      return NextResponse.json(
-        { success: false, error: "Audit not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: "Audit not found" }, { status: 404 });
     }
 
     return NextResponse.json({ success: true, data: audit });
@@ -45,9 +41,12 @@ export async function GET(
 }
 
 export async function PATCH(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_AUDITS_CONDUCT], "quality_audits", "PATCH");
+  if (!check.ok) return check.response;
+
   try {
     const { id } = await params;
     const body = await request.json();
@@ -64,10 +63,7 @@ export async function PATCH(
     if (body.scopeAr !== undefined) data.scopeAr = body.scopeAr;
     if (body.reportFilePath !== undefined) data.reportFilePath = body.reportFilePath;
 
-    const audit = await prisma.qualityAudit.update({
-      where: { id },
-      data,
-    });
+    const audit = await prisma.qualityAudit.update({ where: { id }, data });
 
     return NextResponse.json({ success: true, data: audit });
   } catch (error) {

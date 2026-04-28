@@ -1,7 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { PERMISSIONS } from "@/lib/permissions";
+import { guardRequest } from "@/lib/authorization";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const check = await guardRequest(request, [PERMISSIONS.QUALITY_VIEW], "quality", "GET");
+  if (!check.ok) return check.response;
+
   try {
     const [
       kpiStatusCounts,
@@ -11,32 +16,23 @@ export async function GET() {
       recentAudits,
       activeAccreditations,
     ] = await Promise.all([
-      // KPI status counts from latest measurements grouped by kpi
       prisma.kpiMeasurement.groupBy({
         by: ["status"],
         _count: { status: true },
         orderBy: { _count: { status: "desc" } },
       }),
-
-      // Open findings counts by severity
       prisma.auditFinding.groupBy({
         by: ["severity"],
         where: { status: { in: ["OPEN", "IN_PROGRESS"] } },
         _count: { severity: true },
       }),
-
-      // Improvement plan stats by status
       prisma.improvementPlan.groupBy({
         by: ["status"],
         _count: { status: true },
       }),
-
-      // Average progress of improvement plans
       prisma.improvementPlan.aggregate({
         _avg: { progressPercentage: true },
       }),
-
-      // 5 recent audits
       prisma.qualityAudit.findMany({
         take: 5,
         orderBy: { createdAt: "desc" },
@@ -45,8 +41,6 @@ export async function GET() {
           _count: { select: { findings: true } },
         },
       }),
-
-      // Active accreditations
       prisma.accreditation.findMany({
         where: { status: "ACCREDITATION_ACTIVE" },
         orderBy: { expiryDate: "asc" },
